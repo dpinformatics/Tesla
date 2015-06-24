@@ -1,4 +1,14 @@
 <?php
+    // let's bootstrap our application.
+    include_once('includes/bootstrap.inc.php');
+
+
+    $user = new User();
+    $user->att("name", "David");
+    var_dump($user);
+
+    exit();
+
 
     header('Content-Type: application/json');
 
