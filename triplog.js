@@ -3,44 +3,9 @@
     // let's define our module
     var app = angular.module('denja', ['ngRoute']);
 
-    var callServiceForTrips;
-    callServiceForTrips = function ($http, method, url) {
-        console.debug('url=' + url);
-        //console.debug('before rows d.trips : ' + d.trips.length + ' - ' + d.trips[0].id + ' - ' + d.trips[0].name);
-        $http.get(url)
-            .success(function (data) {
-                return data;
-                //console.debug('after rows d.trips :' + d.trips.length + ' - ' + d.trips[0].id + ' - ' + d.trips[0].name);
-            })
-            .error(function (data) {
-                alert('error in ' + method + ' - ' + data);
-            });
-    };
 
-    var callServiceForTrip;
-    callServiceForTrip = function (method, url) {
-        console.debug('url=' + url);
-        console.debug('before rows d.trip : ' + d.trip.length + ' - ' + d.trip.id + ' - ' + d.trip.desc);
-        $http.get(url)
-            .success(function (data) {
-                //d.trip = data;
-                console.debug('after rows d.trip :' + + d.trip.length + ' - ' + d.trip.id + ' - ' + d.trip.desc);
-            })
-            .error(function (data) {
-                alert('error in ' + method + ' - ' + data);
-            });
-    };
 
-    var gettripslocal;
-    gettripslocal = function($http) {
-        //console.debug('gettrips method called');
 
-        // build urlString
-        var url = 'server.php?action=gettrips';
-
-        //call service and get updated data
-        return callServiceForTrips($http, "GetTrips", url);
-    };
 
     app.factory('TeslaTripService', ['$interval', '$http', function($interval, $http) {
 		var d = {
@@ -393,13 +358,39 @@
 			controllermethods: {}
 			};
 
-        //d.trips = gettripslocal($http);
-
         d.controllermethods.gettrips = function () {
-            d.trips = gettripslocal($http)
-        }
+            //console.debug('gettrips method called');
 
-		d.controllermethods.gettrip = function(tripid) {
+            // build urlString
+            var url = 'server.php?action=gettrips';
+            console.debug('url=' + url);
+
+            // get the data
+            $http.get(url)
+                .success(function (data) {
+                    d.trips =  data;
+                    //console.debug('after rows d.trips :' + d.trips.length + ' - ' + d.trips[0].id + ' - ' + d.trips[0].name);
+                })
+                .error(function (data) {
+                    alert('error in ' + method + ' - ' + data);
+                });
+        };
+
+        var callServiceForTrip;
+        callServiceForTrip = function (method, url) {
+            console.debug('url=' + url);
+            console.debug('before rows d.trip : ' + d.trip.length + ' - ' + d.trip.id + ' - ' + d.trip.desc);
+            $http.get(url)
+                .success(function (data) {
+                    //d.trip = data;
+                    console.debug('after rows d.trip :' + + d.trip.length + ' - ' + d.trip.id + ' - ' + d.trip.desc);
+                })
+                .error(function (data) {
+                    alert('error in ' + method + ' - ' + data);
+                });
+        };
+
+        d.controllermethods.gettrip = function(tripid) {
             //console.debug('gettrip method called');
 
             // build urlString
@@ -493,7 +484,7 @@
             this.date = "";
             this.currentdate = function(){
                 this.date = new Date();
-            }
+            };
 
             this.gettrip = function(tripid){
                 console.debug('gettrip ' + tripid);
@@ -503,11 +494,11 @@
             };
 
             this.gotolist = function(){
-                this.view = 'list'
-                this.activetrip = 0
-                this.waypointviuw = 0;
+                this.view = 'list';
+                this.activetrip = 0;
+                this.waypointview = 0;
                 //this.m.gettrips();
-            }
+            };
 
 
             // Controller process
