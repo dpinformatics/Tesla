@@ -1,0 +1,298 @@
+<html><head><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title> - jsFiddle demo by flexin</title>
+  
+  <script type="text/javascript" src="/js/lib/dummy.js"></script>
+  
+  
+  
+  
+  <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+  
+    
+      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    
+  
+    
+      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.min.js"></script>
+    
+  
+    
+      <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    
+  
+  <style type="text/css">
+    
+  </style>
+  
+
+
+<script type="text/javascript">//<![CDATA[ 
+
+(function() {
+    
+    
+    // let's define our module
+    var app = angular.module('denja', ['ngRoute']);
+       
+    app.factory('TeslaTripService', ['$interval', function($interval) {
+        var d = {
+            trip: {
+                id: 1,
+                desc: 'Trip naar de midi',
+                waypoints: [
+                    {name: 'Home',
+                     theoretical: {
+                         distance: 0,
+                         typical: 380,
+                         consumption: 0,
+                         time: 0
+                     },
+                     efffective: {
+                         arrival: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         chargestart: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         chargeend: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         departure:{
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         }
+                     }
+                         
+                    },
+                    {name: 'Aartselaar SC',
+                     theoretical: {
+                         distance: 25,
+                         typical: 380,
+                         consumption: 0,
+                         time: 0
+                     },
+                     efffective: {
+                         arrival: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         chargestart: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         chargeend: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         departure:{
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         }
+                     }
+                         
+                    },
+                     {name: 'Gent SC',
+                     theoretical: {
+                         distance: 30,
+                         typical: 380,
+                         consumption: 0,
+                         time: 0
+                     },
+                     efffective: {
+                         arrival: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         chargestart: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         chargeend: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         departure:{
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         }
+                     }
+                         
+                    },
+                     {name: 'Calais SC',
+                     theoretical: {
+                         distance: 58,
+                         typical: 380,
+                         consumption: 0,
+                         time: 0
+                     },
+                     efffective: {
+                         arrival: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         chargestart: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         chargeend: {
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         },
+                         departure:{
+                             distance: 0,
+                             typical: 380,
+                             consumption: 0,
+                             time: 0
+                         }
+                     }
+                         
+                    }
+                ]
+            }
+        }; 
+        
+        d.fetchTrip = function(id) {
+            // code hier zetten om voor id de data op te halen op de server
+            // en in d.trip te zetten.
+            
+            
+            d.initCumul();
+        }
+        
+        d.addStep = function() {
+            // code om alle wijzigingen naar de server te updaten...
+            
+        }
+        
+        d.initCumul = function() {
+            for(i = 0; i < d.trip.waypoints.length; i++) {
+                if(i == 0) {
+                    d.trip.waypoints[i].theoretical.distance_cumul = d.trip.waypoints[i].theoretical.distance;
+                } else {
+                     d.trip.waypoints[i].theoretical.distance_cumul = d.trip.waypoints[i].theoretical.distance + d.trip.waypoints[i-1].theoretical.distance_cumul;
+                }
+            }
+        }
+        
+              
+        return d;
+    }]);
+    app.controller('TeslaTripController', ['$scope', 'TeslaTripService',                 
+        function($scope, TeslaTripService) {
+            this.trip = TeslaTripService.trip;
+            this.initCumul = TeslaTripService.initCumul;
+            TeslaTripService.initCumul();
+        }]);
+                              
+    
+})();
+//]]>  
+
+</script>
+
+
+</head>
+<body>
+  <div ng-app="denja" class="row ng-scope">
+<div class="col-md-12">
+    <div ng-controller="TeslaTripController as o" class="well ng-scope">
+        <h1 class="ng-binding">Trip 1 - Trip naar de midi</h1>     
+        <table class="table table-hover table-striped">
+            <tbody><tr>
+                <th>Stop</th>
+                <th>Planning</th>
+                <th></th>
+            </tr>
+            <!-- ngRepeat: wp in o.trip.waypoints --><tr ng-repeat="wp in o.trip.waypoints" class="ng-scope">
+              
+                <td class="ng-binding"> 
+                    0. Home</td>
+                <td class="ng-binding">0 - cumul: 0
+                   </td> 
+                <td>
+                    <input type="number" ng-model="wp.theoretical.distance" ng-change="o.initCumul()" class="ng-pristine ng-untouched ng-valid">
+                </td>
+                
+                
+            </tr><!-- end ngRepeat: wp in o.trip.waypoints --><tr ng-repeat="wp in o.trip.waypoints" class="ng-scope">
+              
+                <td class="ng-binding"> 
+                    1. Aartselaar SC</td>
+                <td class="ng-binding">25 - cumul: 25
+                   </td> 
+                <td>
+                    <input type="number" ng-model="wp.theoretical.distance" ng-change="o.initCumul()" class="ng-pristine ng-untouched ng-valid">
+                </td>
+                
+                
+            </tr><!-- end ngRepeat: wp in o.trip.waypoints --><tr ng-repeat="wp in o.trip.waypoints" class="ng-scope">
+              
+                <td class="ng-binding"> 
+                    2. Gent SC</td>
+                <td class="ng-binding">30 - cumul: 55
+                   </td> 
+                <td>
+                    <input type="number" ng-model="wp.theoretical.distance" ng-change="o.initCumul()" class="ng-pristine ng-untouched ng-valid">
+                </td>
+                
+                
+            </tr><!-- end ngRepeat: wp in o.trip.waypoints --><tr ng-repeat="wp in o.trip.waypoints" class="ng-scope">
+              
+                <td class="ng-binding"> 
+                    3. Calais SC</td>
+                <td class="ng-binding">58 - cumul: 113
+                   </td> 
+                <td>
+                    <input type="number" ng-model="wp.theoretical.distance" ng-change="o.initCumul()" class="ng-pristine ng-untouched ng-valid">
+                </td>
+                
+                
+            </tr><!-- end ngRepeat: wp in o.trip.waypoints -->
+            
+        </tbody></table>
+    </div>
+</div>
+</div>
+
+
+  
+
+
+
+
+
+</body></html>

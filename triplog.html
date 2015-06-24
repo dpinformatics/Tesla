@@ -1,0 +1,237 @@
+<html><head><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>- Tesla-Logging - Overzicht trips -</title>
+  <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+  <style type="text/css">
+    
+  </style>
+
+</head>
+<body ng-app="denja" ng-controller="TeslaTripController as o" >
+<div  class="row ">
+<div class="col-md-12">
+    <div class="well ">
+
+		<div ng-show="o.view == 'list'" ng-model="o.trips">
+			<h1 >Overzicht trips</h1>
+			<table class="table table-hover table-striped">
+				<tbody><tr>
+					<th>Datum</th>
+					<th>Omschrijving</th>
+					<th>Status</th>
+				</tr>
+				<tr ng-repeat="trip in o.trips" >
+				  
+					<td >{{trip.date}}</td>
+					<td >{{trip.name}}</td>
+					<td >{{trip.status}}</td>
+					<td><a class="btn btn-primary btn-lg" ng-click="o.gettrip(trip.id);">Detail</a></td>
+				</tr>
+			</tbody></table>
+		</div>
+		
+		<div ng-show="o.view == 'detail'">
+			<a class="btn btn-primary  btn-lg" ng-click="o.gotolist();">Go back to list</a>
+            <h1 class="ng-binding">{{o.trip.desc}}</h1>
+            <h3 class="ng-binding"> We zijn {{o.status[o.trip.statusid].description}} {{o.trip.waypoints[o.trip.etape].name}}.
+                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myArrival" ng-show="o.trip.statusid == 0" >Aankomst</a>
+                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeStart" ng-show="o.trip.statusid == 1" >Start laden</a>
+                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeEnd" ng-show="o.trip.statusid == 2" >Stop laden</a>
+                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myDeparture"  ng-show="o.trip.statusid == 1 || o.trip.statusid == 3" >Vertrek</a>
+            </h3>
+            <table class="table table-hover table-striped">
+                <tbody><tr>
+                    <th>&nbsp</th>
+                    <th>Afstand<br>km</th>
+                    <th>Typical<br>km</th>
+                    <th>Verbruik<br>kWh</th>
+                    <th>Gemiddeld<br>kWh</th>
+                    <th>Rijtijd<br>u</th>
+                    <th>Laadtijd<br>u</th>
+                    <th>Laden tot<br></th>
+                    <th>Aankomst<br>u</th>
+                    <th>Vertrek<br>u</th>
+                    <th>&nbsp</th>
+                </tr>
+                <tr ng-repeat="wp in o.trip.waypoints" class="ng-scope">
+
+                    <td class="ng-binding">{{wp.name}}</td>
+                    <td class="ng-binding">{{wp.overview.distance}}<br>{{wp.overview.totaldistance}}</td>
+                    <td class="ng-binding">{{wp.overview.typical}}<br>{{wp.overview.totaltypical}}</td>
+                    <td class="ng-binding">{{wp.overview.consumption}}<br>{{wp.overview.totalconsumption}}</td>
+                    <td class="ng-binding">{{wp.overview.averageconsumption}}</td>
+                    <td class="ng-binding">{{wp.overview.drivetime}}<br>{{wp.overview.totaldrivetime}}</td>
+                    <td class="ng-binding">{{wp.overview.chargetime}}<br>{{wp.overview.totalchargetime}}</td>
+                    <td class="ng-binding"><b>{{wp.overview.chargeneeded}}</b></td>
+                    <td class="ng-binding">{{wp.overview.arrivaltime}}</td>
+                    <td class="ng-binding">{{wp.overview.departuretime}}</td>
+                    <td><a class="open-WayPointDetail btn btn-primary btn-lg" data-toggle="modal" data-target="#myWayPointDetail" data-wpid="{{$index}}">Detail</a></td>
+                </tr>
+                </tbody></table>
+		</div>
+		
+    </div>
+</div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                trip {{o.activetrip}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myArrival" tabindex="-1" role="dialog" aria-labelledby="myArrivalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Aankomst in {{o.trip.waypoints[o.trip.etape].name}} om {{date | date:'HH:mm'}}</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="arrival-typical" class="control-label">Typical range :</label>
+                        <input type="text" class="form-control" id="arrival-typical" value="{{o.trip.waypoints[o.trip.etape].theoretical.arrival.typical}}">km
+                    </div>
+                    <div class="form-group">
+                        <label for="arrival-distance" class="control-label">Km-stand :</label>
+                        <input type="text" class="form-control" id="arrival-distance" value="{{o.trip.waypoints[o.trip.etape].theoretical.arrival.distance}}">km
+                    </div>
+                    <div class="form-group">
+                        <label for="arrival-consumption" class="control-label">Verbruik :</label>
+                        <input type="text" class="form-control" id="arrival-consumption" value="{{o.trip.waypoints[o.trip.etape].theoretical.arrival.consumption}}">kWh
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                <button type="button" class="btn btn-primary" ng-click="o.m.savearrival();">Bewaren</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myChargeStart" tabindex="-1" role="dialog" aria-labelledby="myChargeStartLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Start laden in {{o.trip.waypoints[o.trip.etape].name}} om {{date | date:'HH:mm'}}</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="chargestart-typical" class="control-label">Typical range :</label>
+                        <input type="text" class="form-control" id="chargestart-typical" value="{{o.trip.waypoints[o.trip.etape].theoretical.chargestart.typical}}">km
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                <button type="button" class="btn btn-primary" ng-click="o.m.savechargestart();">Bewaren</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myChargeEnd" tabindex="-1" role="dialog" aria-labelledby="myChargeEndLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Stop laden in {{o.trip.waypoints[o.trip.etape].name}} om {{date | date:'HH:mm'}}</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="chargeend-typical" class="control-label">Typical range :</label>
+                        <input type="text" class="form-control" id="chargeend-typical" value="{{o.trip.waypoints[o.trip.etape].theoretical.chargeend.typical}}">km
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                <button type="button" class="btn btn-primary" ng-click="o.m.savechargeend();">Bewaren</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myDeparture" tabindex="-1" role="dialog" aria-labelledby="myDepartureLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Vertrek vanuit {{o.trip.waypoints[o.trip.etape].name}} om {{o.currentdate | date:'HH:mm'}}</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="departure-typical" class="control-label">Typical range :</label>
+                        <input type="number" class="form-control" id="departure-typical" ng-model="o.trip.waypoints[o.trip.etape].theoretical.departure.typical" >km
+                    </div>
+                    <div class="form-group">
+                        <label for="departure-distance" class="control-label">Km-stand :</label>
+                        <input type="number" class="form-control" id="departure-distance" ng-model="o.trip.waypoints[o.trip.etape].theoretical.departure.distance">km
+                    </div>
+                    <div class="form-group">
+                        <label for="departure-consumption" class="control-label">Verbruik :</label>
+                        <input type="number" class="form-control" id="departure-consumption" ng-modal="o.trip.waypoints[o.trip.etape].theoretical.departure.consumption">kWu
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                <button type="button" class="btn btn-primary" ng-click="o.m.savedeparture();">Bewaren</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myWayPointDetail" tabindex="-1" role="dialog" aria-labelledby="myWayPointDetailLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Detail van {{o.trip.waypoints[o.trip.etape].name}}</h4>
+            </div>
+            <div class="modal-body">
+                trip {{o.activetrip}} - etape {{o.trip.etape}}
+                <input type="text" name="wpId" id="wpId" value=""/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                <!-- button type="button" class="btn btn-primary" ng-click="o.m.savedeparture();">Bewaren</button -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="/js/lib/dummy.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+  <script src="triplog.js"></script>
+
+</body>
+</html>
