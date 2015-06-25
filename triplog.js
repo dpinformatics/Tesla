@@ -464,7 +464,6 @@
             // hide modal-form
             $('#myDeparture').modal('hide');
         };
-        return d;
 
         var nextstep = function(){
             d.trip.statusid ++;
@@ -473,6 +472,8 @@
                 d.trip.etape ++;
             }
         };
+        return d;
+
 
 
     }]);
@@ -522,7 +523,9 @@
 
     $(document).on("click", ".open-WayPointDetail", function () {
         var wpId = $(this).data('wpid');
-        $(".modal-body #wpId").val( wpId );
+        var wp = $(this).data('wp');
+        $(".modal-header #wpTitle").text("Detail van (" + wpId + ") " + wp.name);
+        $(".modal-body #wpId").val("Detail van (" + wpId + ") " + wp.name);
     });
 
 
