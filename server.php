@@ -5,6 +5,9 @@
 
     $user = new User();
     $user->att("name", "David");
+    echo $user->att("name");
+
+    $user->save();
     var_dump($user);
 
     exit();

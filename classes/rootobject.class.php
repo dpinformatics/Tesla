@@ -7,8 +7,13 @@
      */
     Class RootObject
     {
+        // lists of predefined column names that are to be treated as metadata
+        protected $metaattributes = array("seqid", "objid", "created", "createdby", "modified", "modifiedby", "isactive");
+        // list of all attributes (retrieved from the database
         protected $attributes;
+        // values of the object
         protected $attributevalues;
+        // is the object dirty? (used for avoiding unnecessary saves...
         protected $isPersistent;
 
 
@@ -16,7 +21,7 @@
         {
             //echo "constructing class";
 
-            $this->attributes = array_change_key_case(DB::MetaColumns($this->dbName()), CASE_LOWER);
+            $this->attributes = array_change_key_case(DB::MetaColumns($this->tableName()), CASE_LOWER);
             foreach (array_keys($this->attributes) as $att) {
                 $this->attributevalues[$att] = array(
                     "value"          => NULL,
@@ -28,7 +33,7 @@
         }
 
 
-        public function dbName()
+        public function tableName()
         {
             return strtolower(get_class($this));
         }
@@ -58,8 +63,92 @@
             }
             else {
                 // we're GETTING the value
-                $this->attributevalues[$attribute]["value"]
+                return $this->attributevalues[$attribute]["value"];
             }
+        }
+
+        public function save() {
+            if($this->isPersistent) return true;
+
+            //TODO: add validation
+
+            // Begin database transaction
+            DB::BeginTransaction();
+            $success = true;
+            if($this->att("objid")) {
+                // we are in UPDATE modus
+                if(!$this->deactive()) {
+                    $success = false;
+                }
+            }
+            // insert new version of the object...
+            $sql = "INSERT INTO " . $this->tableName() . "(objid, isActive, created, createdby, modified, modifiedby, ";
+            foreach($this->attributes as $att) {
+                if(!in_array($att->name, $this->metaattributes)) {
+                    $sql .= ", " . $att->name;
+                }
+            }
+            $sql .= ") VALUES (";
+
+            // objid
+            if(!$this->att("objid")) {
+                // generate new object --> stukje voor max(objid) + 1??
+                // TODO: code voor object + 1
+            } else {
+                $sql .= DB::qstr($this->att("objid"));
+            }
+            // isActive
+            $sql .= ", 1";
+            // created
+            if(!$this->att("objid")) {
+                $sql .= ", NOW()";
+            } else {
+                $sql .= ', FROM_UNIXTIME(' . $this->att('created') . ')';
+            }
+            // createdby
+            if(!$this->att("objid")) {
+                $sql .= ", 1"; //TODO: fill in the actual user id
+            } else {
+                $sql .= ', ' . DB::qstr($this->att('createdby'));
+            }
+            // modified
+            $sql .= ", NOW()";
+            // modifiedBy
+            $sql .= ", 1"; //TODO: fill in the actual user id
+
+            // loop over the attributes here...
+            foreach($this->attributes as $att) {
+                if(!in_array($att->name, $this->metaattributes)) {
+                    switch($att->datatype) {
+                        //case "datetime":
+
+
+                        default:
+                            throw Exception("Datatype " . $att->datatype . " not supported for " . get_class($this) . "." . $att->name);
+                    }
+                }
+            }
+
+            try {
+                DB::Execute($sql);
+            } catch (Exception $e) {
+                // catching exception and returning false...
+                $success = false;
+            }
+
+
+
+
+            DB::Commit($success);
+            return $success;
+        }
+
+        protected function _deactivate() {
+            $sql = "UPDATE " . $this->tableName() . " SET isActive = 0";
+            DB::Execute($sql);
+
+            return true;
+
         }
 
 
