@@ -1,73 +1,74 @@
-<html><head><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>- Tesla-Logging - Overzicht trips -</title>
-  <!--link rel="stylesheet" type="text/css" href="/css/result-light.css" -->
-  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>- Tesla-Logging - Overzicht trips -</title>
+    <!--link rel="stylesheet" type="text/css" href="/css/result-light.css" -->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 
-  <style type="text/css">
+    <style type="text/css">
     
   </style>
-
 </head>
+
 <body ng-app="denja" ng-controller="TeslaTripController as o" >
 <div  class="row ">
 <div class="col-md-12">
     <div class="well ">
 
-		<div ng-show="o.view == 'list'" ng-model="o.trips">
-			<h1 >Overzicht trips</h1>
+		<div ng-show="o.view == 'list'">
+			<h1 class="bg-info">Overzicht trips</h1>
 			<table class="table table-hover table-striped">
 				<tbody><tr>
+                    <th>&nbsp;</th>
 					<th>Datum</th>
 					<th>Omschrijving</th>
 					<th>Status</th>
 				</tr>
 				<tr ng-repeat="trip in o.trips" >
-				  
+                    <td><a class="btn btn-info btn-lg" ng-click="o.gettrip(trip.id);">Detail</a></td>
 					<td >{{trip.date}}</td>
 					<td >{{trip.name}}</td>
 					<td >{{trip.status}}</td>
-					<td><a class="btn btn-primary btn-lg" ng-click="o.gettrip(trip.id);">Detail</a></td>
 				</tr>
 			</tbody></table>
 		</div>
 		
 		<div ng-show="o.view == 'detail'">
-			<a class="btn btn-primary  btn-lg" ng-click="o.gotolist();">Go back to list</a>
-            <h1 class="ng-binding">{{o.trip.desc}}</h1>
-            <h3 class="ng-binding"> We zijn {{o.status[o.trip.statusid].description}} {{o.trip.waypoints[o.trip.etape].name}}.
+            <h1 class="ng-binding bg-info"><a class="btn btn-info  btn-lg" ng-click="o.gotolist();">Go back to list</a> {{o.trip.desc}}</h1>
+            <h3 class="ng-binding"> We zijn {{o.status[o.trip.statusid].description}} {{o.trip.waypoints[o.trip.etape].name}}.<br>
                 <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myArrival" ng-show="o.trip.statusid == 0" >Aankomst</a>
                 <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeStart" ng-show="o.trip.statusid == 1" >Start laden</a>
                 <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeEnd" ng-show="o.trip.statusid == 2" >Stop laden</a>
                 <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myDeparture"  ng-show="o.trip.statusid == 1 || o.trip.statusid == 3" >Vertrek</a>
             </h3>
             <table class="table table-hover table-striped">
-                <tbody><tr>
+                <tbody><tr class="bg-success">
                     <th>&nbsp</th>
-                    <th>Afstand<br>km</th>
-                    <th>Typical<br>km</th>
-                    <th>Verbruik<br>kWh</th>
-                    <th>Gemiddeld<br>kWh</th>
-                    <th>Rijtijd<br>u</th>
-                    <th>Laadtijd<br>u</th>
-                    <th>Laden tot<br></th>
-                    <th>Aankomst<br>u</th>
-                    <th>Vertrek<br>u</th>
                     <th>&nbsp</th>
+                    <th class="text-center">Afstand<br>km</th>
+                    <th class="text-center">Typical<br>km</th>
+                    <th class="text-center">Verbruik<br>kWh</th>
+                    <th class="text-center">Gemiddeld<br>kWh</th>
+                    <th class="text-center">Rijtijd<br>u</th>
+                    <th class="text-center">Laadtijd<br>u</th>
+                    <th class="text-center">Laden tot<br></th>
+                    <th class="text-center">Aankomst<br>u</th>
+                    <th class="text-center">Vertrek<br>u</th>
                 </tr>
                 <tr ng-repeat="wp in o.trip.waypoints" class="ng-scope">
-
+                    <td><a class="open-WayPointDetail btn btn-info btn-lg" data-toggle="modal" data-target="#myWayPointDetail" data-wpid="{{$index}}" data-wp="{{wp}}">Detail</a></td>
                     <td class="ng-binding">{{wp.name}}</td>
-                    <td class="ng-binding">{{wp.overview.distance}}<br>{{wp.overview.totaldistance}}</td>
-                    <td class="ng-binding">{{wp.overview.typical}}<br>{{wp.overview.totaltypical}}</td>
-                    <td class="ng-binding">{{wp.overview.consumption}}<br>{{wp.overview.totalconsumption}}</td>
-                    <td class="ng-binding">{{wp.overview.averageconsumption}}</td>
-                    <td class="ng-binding">{{wp.overview.drivetime}}<br>{{wp.overview.totaldrivetime}}</td>
-                    <td class="ng-binding">{{wp.overview.chargetime}}<br>{{wp.overview.totalchargetime}}</td>
-                    <td class="ng-binding"><b>{{wp.overview.chargeneeded}}</b></td>
-                    <td class="ng-binding">{{wp.overview.arrivaltime}}</td>
-                    <td class="ng-binding">{{wp.overview.departuretime}}</td>
-                    <td><a class="open-WayPointDetail btn btn-primary btn-lg" data-toggle="modal" data-target="#myWayPointDetail" data-wpid="{{$index}}">Detail</a></td>
+                    <td class="ng-binding text-center">{{wp.overview.distance}}<br><small>{{wp.overview.totaldistance}}</small></td>
+                    <td class="ng-binding text-center">{{wp.overview.typical}}<br><small>{{wp.overview.totaltypical}}</small></td>
+                    <td class="ng-binding text-center">{{wp.overview.consumption}}<br><small>{{wp.overview.totalconsumption}}</small></td>
+                    <td class="ng-binding text-center">{{wp.overview.averageconsumption}}</td>
+                    <td class="ng-binding text-center">{{wp.overview.drivetime}}<br><small>{{wp.overview.totaldrivetime}}</small></td>
+                    <td class="ng-binding text-center">{{wp.overview.chargetime}}<br><small>{{wp.overview.totalchargetime}}</small></td>
+                    <td class="ng-binding text-center"><b>{{wp.overview.chargeneeded}}</b></td>
+                    <td class="ng-binding text-center">{{wp.overview.arrivaltime}}</td>
+                    <td class="ng-binding text-center">{{wp.overview.departuretime}}</td>
                 </tr>
                 </tbody></table>
 		</div>
@@ -101,7 +102,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Aankomst in {{o.trip.waypoints[o.trip.etape].name}} om {{date | date:'HH:mm'}}</h4>
+                <h4 class="modal-title bg-info" >Aankomst in {{o.trip.waypoints[o.trip.etape].name}}</h4>
             </div>
             <div class="modal-body">
                 <form>
@@ -132,7 +133,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Start laden in {{o.trip.waypoints[o.trip.etape].name}} om {{date | date:'HH:mm'}}</h4>
+                <h4 class="modal-title bg-info" >Start laden in {{o.trip.waypoints[o.trip.etape].name}}</h4>
             </div>
             <div class="modal-body">
                 <form>
@@ -209,7 +210,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Detail van {{o.trip.waypoints[o.trip.etape].name}}</h4>
+                <h4 class="modal-title"><div name="wpTitle" id="wpTitle">Detail van ...</div></h4>
             </div>
             <div class="modal-body">
                 trip {{o.activetrip}} - etape {{o.trip.etape}}
