@@ -4,10 +4,20 @@
 
 
     $ts = new tripstatus();
+    //$ts->retrieve(4);
 
-    $ts->att("name_en", "Scheduled");
+    $ts->att("objid", 4);
+
+    $ts->att("name_en", "updated after explicite object id");
     $ts->save();
 
+    echo TripStatus::STATUS_SCHEDULED;
+
+    //sleep(5);
+    /*
+        $ts->att("name_en", "Started");
+        $ts->save();
+    */
     exit();
 
 

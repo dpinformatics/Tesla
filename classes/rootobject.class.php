@@ -67,6 +67,44 @@
             }
         }
 
+        public function retrieve($objid)
+        {
+            $sql = "SELECT seqid, objid, unix_timestamp(created) as created, createdby, unix_timestamp(modified) as modified, modifiedby, isActive, IPv4";
+
+            foreach ($this->attributes as $att) {
+                if (!in_array($att->name, $this->metaattributes)) {
+                    switch ($att->type) {
+                        case "datetime":
+                            // timestamps are in unixtimestamp in php
+                            $sql .= ", UNIX_TIMESTAMP(" . $att->name . ") as " . $att->name;
+                            break;
+                        case "varchar"
+                        :
+                            $sql .= ", " . $att->name;
+                            break;
+
+                        default:
+                            throw new Exception("Datatype " . $att->type . " not supported for " . get_class($this) . "." . $att->name);
+                    }
+                }
+            }
+
+            $sql .= " FROM " . $this->tableName() . " WHERE isActive = 1 AND objID = " . DB::qstr($objid);
+            $rs = DB::Execute($sql);
+
+            if (!$rs->EOF) {
+                foreach (array_keys($rs->fields) as $att) {
+                    $this->att($att, $rs->fields[$att]);
+                }
+                $this->isPersistent = true;
+
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
         public function save() {
             if($this->isPersistent) return true;
 
@@ -92,8 +130,7 @@
 
             // objid
             if(!$this->att("objid")) {
-                // generate new object --> stukje voor max(objid) + 1??
-                // object id is generated afterwards...
+
                 $minimumID = date("Ymd") * 100000 + rand(0, 50000);
                 $minimumID = 1;
 
@@ -106,6 +143,7 @@
                 $sql .= DB::qstr($this->att("objid"));
                 $this->att("modified", time());
                 $this->att("modifiedBy", 1); // TODO: effectieve gebruiker invullen!
+                if (!$this->att("created")) $this->att("created", time());
             }
             // isActive
             $sql .= ", 1";
@@ -128,7 +166,7 @@
                     switch ($att->type) {
                         case "datetime":
                             // timestamps are in unixtimestamp in php
-                            $sql .= ", FROM_UNIXTIME(" . $this->att($att->name);
+                            $sql .= ", FROM_UNIXTIME(" . $this->att($att->name) . ")";
                             break;
                         case "varchar"
                         :
