@@ -8,7 +8,7 @@
     Class RootObject
     {
         // lists of predefined column names that are to be treated as metadata
-        protected $metaattributes = array("seqid", "objid", "created", "createdby", "modified", "modifiedby", "isactive");
+        protected $metaattributes = array("seqid", "objid", "created", "createdBy", "modified", "modifiedBy", "isActive", "IPv4");
         // list of all attributes (retrieved from the database
         protected $attributes;
         // values of the object
@@ -77,12 +77,12 @@
             $success = true;
             if($this->att("objid")) {
                 // we are in UPDATE modus
-                if(!$this->deactive()) {
+                if (!$this->_deactivate()) {
                     $success = false;
                 }
             }
             // insert new version of the object...
-            $sql = "INSERT INTO " . $this->tableName() . "(objid, isActive, created, createdby, modified, modifiedby, ";
+            $sql = "INSERT INTO " . $this->tableName() . "(objID, isActive, created, createdby, modified, modifiedby, IPv4";
             foreach($this->attributes as $att) {
                 if(!in_array($att->name, $this->metaattributes)) {
                     $sql .= ", " . $att->name;
@@ -93,48 +93,73 @@
             // objid
             if(!$this->att("objid")) {
                 // generate new object --> stukje voor max(objid) + 1??
-                // TODO: code voor object + 1
+                // object id is generated afterwards...
+                $minimumID = date("Ymd") * 100000 + rand(0, 50000);
+                $minimumID = 1;
+
+                $sql .= "ifnull((SELECT newID FROM (SELECT MAX(objID) + 1 as 'newID' FROM " . $this->tableName() . " WHERE objID >= " . $minimumID . ") as x), " . $minimumID . ")";
+                $this->att("created", time());
+                $this->att("createdby", 1); // TODO: effectieve gebruiker invullen!
+                $this->att("modified", $this->att("created"));
+                $this->att("modifiedBy", 1); // TODO: effectieve gebruiker invullen!
             } else {
                 $sql .= DB::qstr($this->att("objid"));
+                $this->att("modified", time());
+                $this->att("modifiedBy", 1); // TODO: effectieve gebruiker invullen!
             }
             // isActive
             $sql .= ", 1";
             // created
-            if(!$this->att("objid")) {
-                $sql .= ", NOW()";
-            } else {
-                $sql .= ', FROM_UNIXTIME(' . $this->att('created') . ')';
-            }
+            $sql .= ', FROM_UNIXTIME(' . $this->att('created') . ')';
+
             // createdby
-            if(!$this->att("objid")) {
-                $sql .= ", 1"; //TODO: fill in the actual user id
-            } else {
-                $sql .= ', ' . DB::qstr($this->att('createdby'));
-            }
+            $sql .= ', ' . DB::qstr($this->att('createdby'));
+
             // modified
             $sql .= ", NOW()";
             // modifiedBy
-            $sql .= ", 1"; //TODO: fill in the actual user id
+            $sql .= ", " . DB::qstr($this->att("modifiedby"));
+            // IPvq adres van de modification
+            $sql .= ", " . DB::qstr($_SERVER["REMOTE_ADDR"]);
 
             // loop over the attributes here...
             foreach($this->attributes as $att) {
                 if(!in_array($att->name, $this->metaattributes)) {
-                    switch($att->datatype) {
-                        //case "datetime":
-
+                    switch ($att->type) {
+                        case "datetime":
+                            // timestamps are in unixtimestamp in php
+                            $sql .= ", FROM_UNIXTIME(" . $this->att($att->name);
+                            break;
+                        case "varchar"
+                        :
+                            $sql .= ", " . DB::qstr($this->att($att->name));
+                            break;
 
                         default:
-                            throw Exception("Datatype " . $att->datatype . " not supported for " . get_class($this) . "." . $att->name);
+                            throw new Exception("Datatype " . $att->type . " not supported for " . get_class($this) . "." . $att->name);
                     }
                 }
             }
+            $sql .= ")"; // end of values
 
             try {
                 DB::Execute($sql);
             } catch (Exception $e) {
                 // catching exception and returning false...
+                echo $e->getMessage();
                 $success = false;
             }
+
+            if ($success && !$this->att("objID")) {
+                // we have a new object id...
+                // let's get it from the database
+                $sql = "SELECT objId as id FROM " . $this->tableName() . " WHERE seqid = " . DB::Insert_ID();
+                $rs = DB::Execute($sql);
+                $this->att("objID", $rs->fields["id"]);
+            }
+
+
+
 
 
 
@@ -144,7 +169,7 @@
         }
 
         protected function _deactivate() {
-            $sql = "UPDATE " . $this->tableName() . " SET isActive = 0";
+            $sql = "UPDATE " . $this->tableName() . " SET isActive = 0 WHERE objid = " . $this->att("objid");
             DB::Execute($sql);
 
             return true;
@@ -164,7 +189,7 @@
                 throw new Exception($att . " is an invalid attribute for class " . get_class($this));
             }
 
-            if (is_numeric($this->attributes[$att]->max_length)) {
+            if (is_numeric($this->attributes[$att]->max_length) && $this->attributes[$att]->type <> 'datetime') {
                 if (strlen($value) > $this->attributes[$att]->max_length) {
                     throw new Exception("value " . $value . " is longer than maximum length of " . $this->attributes[$att]->max_length . " for " . get_class($this) . "." . $att);
                 }

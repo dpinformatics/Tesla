@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="tesla.dpinformatics.be">
+  <component name="PublishConfigData" serverName="tesla.dpinformatics.be" uploadOnCheckin="f7f313da-b0c6-44d4-a5ea-51cb468505cd">
     <serverData>
       <paths name="tesla.dpinformatics.be">
         <serverdata>
@@ -10,6 +10,7 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myUploadOnCheckinName" value="tesla.dpinformatics.be" />
   </component>
 </project>
 

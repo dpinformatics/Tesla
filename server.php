@@ -3,12 +3,10 @@
     include_once('includes/bootstrap.inc.php');
 
 
-    $user = new User();
-    $user->att("name", "David");
-    echo $user->att("name");
+    $ts = new tripstatus();
 
-    $user->save();
-    var_dump($user);
+    $ts->att("name_en", "Scheduled");
+    $ts->save();
 
     exit();
 
