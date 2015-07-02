@@ -3,13 +3,21 @@
     include_once('includes/bootstrap.inc.php');
 
 
-    $user = new User();
-    $user->att("name", "David");
-    echo $user->att("name");
+    $ts = new tripstatus();
+    //$ts->retrieve(4);
 
-    $user->save();
-    var_dump($user);
+    $ts->att("objid", 4);
 
+    $ts->att("name_en", "updated after explicite object id");
+    $ts->save();
+
+    echo TripStatus::STATUS_SCHEDULED;
+
+    //sleep(5);
+    /*
+        $ts->att("name_en", "Started");
+        $ts->save();
+    */
     exit();
 
 
