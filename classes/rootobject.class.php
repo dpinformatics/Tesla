@@ -75,9 +75,12 @@
                 if (!in_array($att->name, $this->metaattributes)) {
                     switch ($att->type) {
                         case "datetime":
+                        case "date":
                             // timestamps are in unixtimestamp in php
                             $sql .= ", UNIX_TIMESTAMP(" . $att->name . ") as " . $att->name;
                             break;
+                            
+                        
                         case "varchar"
                         :
                             $sql .= ", " . $att->name;
@@ -165,6 +168,7 @@
                 if(!in_array($att->name, $this->metaattributes)) {
                     switch ($att->type) {
                         case "datetime":
+                        case "date":
                             // timestamps are in unixtimestamp in php
                             $sql .= ", FROM_UNIXTIME(" . $this->att($att->name) . ")";
                             break;
