@@ -9,6 +9,39 @@
 // let's bootstrap our application.
 include_once('includes/bootstrap.inc.php');
 
+exit();
+
+
+
+
+
+
+
+// tripstatus
+/*
+$wps1 = new waypointstatus();
+$wps1->att("objid", 0);
+$wps1->att("name_en", "Driving");
+$wps1->save();
+*/
+$wps2 = new waypointstatus();
+$wps2->att("name_en", "Arrived");
+$wps2->save();
+
+$wps3 = new waypointstatus();
+$wps3->att("name_en", "Charging");
+$wps3->save();
+
+$wps3 = new waypointstatus();
+$wps3->att("name_en", "Charged");
+$wps3->save();
+
+$wps3 = new waypointstatus();
+$wps3->att("name_en", "Left");
+$wps3->save();
+
+exit();
+
 
 // trip
 
@@ -24,22 +57,7 @@ $t1->att("theoreticalstarttime", mktime(2, 0, 0));
 $t1->save();
 
 
-exit();
 
-
-
-// tripstatus
-$ts1 = new tripstatus();
-$ts1->att("name_en", "Scheduled");
-$ts1->save();
-
-$ts2 = new tripstatus();
-$ts2->att("name_en", "Started");
-$ts2->save();
-
-$ts3 = new tripstatus();
-$ts3->att("name_en", "Ended");
-$ts3->save();
 
 
 //$ts->retrieve(4);
