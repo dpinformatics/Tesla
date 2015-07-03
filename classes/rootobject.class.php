@@ -233,7 +233,7 @@
                 throw new Exception($att . " is an invalid attribute for class " . get_class($this));
             }
 
-            if (is_numeric($this->attributes[$att]->max_length) && $this->attributes[$att]->type <> 'datetime') {
+            if (is_numeric($this->attributes[$att]->max_length) && $this->attributes[$att]->max_lengt > 0) {
                 if (strlen($value) > $this->attributes[$att]->max_length) {
                     throw new Exception("value " . $value . " is longer than maximum length of " . $this->attributes[$att]->max_length . " for " . get_class($this) . "." . $att);
                 }
