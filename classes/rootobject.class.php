@@ -76,6 +76,7 @@
                     switch ($att->type) {
                         case "datetime":
                         case "date":
+                        case "time":
                             // timestamps are in unixtimestamp in php
                             $sql .= ", UNIX_TIMESTAMP(" . $att->name . ") as " . $att->name;
                             break;
@@ -169,6 +170,7 @@
                     switch ($att->type) {
                         case "datetime":
                         case "date":
+                        case "time":
                             // timestamps are in unixtimestamp in php
                             $sql .= ", FROM_UNIXTIME(" . $this->att($att->name) . ")";
                             break;
