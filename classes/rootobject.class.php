@@ -29,6 +29,12 @@
                 );
             }
 
+            foreach($this->attributes as $att) {
+                if($att->has_default) {
+                    $this->att($att->name, $att->default_value);
+                }
+            }
+
 
         }
 
@@ -80,10 +86,12 @@
                             // timestamps are in unixtimestamp in php
                             $sql .= ", UNIX_TIMESTAMP(" . $att->name . ") as " . $att->name;
                             break;
-                            
-                        
-                        case "varchar"
-                        :
+
+                        case "varchar":
+                        case "bigint":
+                        case "int":
+                        case "tinyint":
+                        case "text":
                             $sql .= ", " . $att->name;
                             break;
 
@@ -127,7 +135,10 @@
             $sql = "INSERT INTO " . $this->tableName() . "(objID, isActive, created, createdby, modified, modifiedby, IPv4";
             foreach($this->attributes as $att) {
                 if(!in_array($att->name, $this->metaattributes)) {
-                    $sql .= ", " . $att->name;
+
+                        $sql .= ", " . $att->name;
+
+
                 }
             }
             $sql .= ") VALUES (";
@@ -167,21 +178,27 @@
             // loop over the attributes here...
             foreach($this->attributes as $att) {
                 if(!in_array($att->name, $this->metaattributes)) {
-                    switch ($att->type) {
-                        case "datetime":
-                        case "date":
-                        case "time":
-                            // timestamps are in unixtimestamp in php
-                            $sql .= ", FROM_UNIXTIME(" . $this->att($att->name) . ")";
-                            break;
-                        case "varchar"
-                        :
-                            $sql .= ", " . DB::qstr($this->att($att->name));
-                            break;
 
-                        default:
-                            throw new Exception("Datatype " . $att->type . " not supported for " . get_class($this) . "." . $att->name);
-                    }
+                        switch ($att->type) {
+                            case "datetime":
+                            case "date":
+                            case "time":
+                                // timestamps are in unixtimestamp in php
+                                $sql .= ", FROM_UNIXTIME(" . $this->att($att->name) . ")";
+                                break;
+
+                            case "varchar":
+                            case "bigint":
+                            case "int":
+                            case "tinyint":
+                            case "text":
+                                $sql .= ", " . DB::qstr($this->att($att->name));
+                                break;
+
+                            default:
+                                throw new Exception("Datatype " . $att->type . " not supported for " . get_class($this) . "." . $att->name);
+                        }
+
                 }
             }
             $sql .= ")"; // end of values
@@ -228,15 +245,21 @@
 
         protected function isValidValue($att, $value)
         {
+           // echo "<pre>";
+           // var_dump($this->attributes[$att]);
             $att = strtolower($att);
             if (!$this->isValidAttribute($att)) {
                 throw new Exception($att . " is an invalid attribute for class " . get_class($this));
             }
 
-            if (is_numeric($this->attributes[$att]->max_length) && $this->attributes[$att]->max_lengt > 0) {
+            if (is_numeric($this->attributes[$att]->max_length) && $this->attributes[$att]->max_length > 0) {
                 if (strlen($value) > $this->attributes[$att]->max_length) {
                     throw new Exception("value " . $value . " is longer than maximum length of " . $this->attributes[$att]->max_length . " for " . get_class($this) . "." . $att);
                 }
+            }
+
+            if($this->attributes[$att]->not_null && is_null($value)) {
+                throw new Exception("value NULL is not allowed for " . get_class($this) . "." . $att);
             }
 
         }

@@ -16,9 +16,10 @@ echo("09-07-2015");
 echo("02:00:00");
 
 $t1 = new trip();
-$t1->att("name", "Scheduled");
+//$t1->att("statusid",1);
+$t1->att("name", "Thuis - La Trêve via Metz");
 $t1->att("date", mktime(0 ,0, 0, 7, 9, 2015));
-$t1->att("theoreticalstarttime", mktime(2, 0));
+$t1->att("theoreticalstarttime", mktime(2, 0, 0));
 
 $t1->save();
 
