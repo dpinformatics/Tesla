@@ -108,15 +108,15 @@
                 <form>
                     <div class="form-group">
                         <label for="arrival-typical" class="control-label">Typical range :</label>
-                        <input type="text" class="form-control" id="arrival-typical" value="{{o.trip.waypoints[o.trip.etape].theoretical.arrival.typical}}">km
+                        <input type="number" class="form-control" id="arrival-typical" ng-model="o.trip.waypoints[o.trip.etape].theoretical.arrival.typical">km
                     </div>
                     <div class="form-group">
                         <label for="arrival-distance" class="control-label">Km-stand :</label>
-                        <input type="text" class="form-control" id="arrival-distance" value="{{o.trip.waypoints[o.trip.etape].theoretical.arrival.distance}}">km
+                        <input type="number" class="form-control" id="arrival-distance" ng-model="o.trip.waypoints[o.trip.etape].theoretical.arrival.distance">km
                     </div>
                     <div class="form-group">
                         <label for="arrival-consumption" class="control-label">Verbruik :</label>
-                        <input type="text" class="form-control" id="arrival-consumption" value="{{o.trip.waypoints[o.trip.etape].theoretical.arrival.consumption}}">kWh
+                        <input type="number" class="form-control" id="arrival-consumption" ng-model="o.trip.waypoints[o.trip.etape].theoretical.arrival.consumption">kWh
                     </div>
                 </form>
             </div>
@@ -139,7 +139,7 @@
                 <form>
                     <div class="form-group">
                         <label for="chargestart-typical" class="control-label">Typical range :</label>
-                        <input type="text" class="form-control" id="chargestart-typical" value="{{o.trip.waypoints[o.trip.etape].theoretical.chargestart.typical}}">km
+                        <input type="number" class="form-control" id="chargestart-typical" ng-model="o.trip.waypoints[o.trip.etape].theoretical.chargestart.typical">km
                     </div>
                 </form>
             </div>
@@ -156,13 +156,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Stop laden in {{o.trip.waypoints[o.trip.etape].name}} om {{date | date:'HH:mm'}}</h4>
+                <h4 class="modal-title" >Stop laden in {{o.trip.waypoints[o.trip.etape].name}}</h4>
             </div>
             <div class="modal-body">
                 <form>
                     <div class="form-group">
                         <label for="chargeend-typical" class="control-label">Typical range :</label>
-                        <input type="text" class="form-control" id="chargeend-typical" value="{{o.trip.waypoints[o.trip.etape].theoretical.chargeend.typical}}">km
+                        <input type="number" class="form-control" id="chargeend-typical" ng-model="o.trip.waypoints[o.trip.etape].theoretical.chargeend.typical">km
                     </div>
                 </form>
             </div>
@@ -179,7 +179,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Vertrek vanuit {{o.trip.waypoints[o.trip.etape].name}} om {{o.currentdate | date:'HH:mm'}}</h4>
+                <h4 class="modal-title" >Vertrek vanuit {{o.trip.waypoints[o.trip.etape].name}}</h4>
             </div>
             <div class="modal-body">
                 <form>
@@ -193,7 +193,7 @@
                     </div>
                     <div class="form-group">
                         <label for="departure-consumption" class="control-label">Verbruik :</label>
-                        <input type="number" class="form-control" id="departure-consumption" ng-modal="o.trip.waypoints[o.trip.etape].theoretical.departure.consumption">kWu
+                        <input type="number" class="form-control" id="departure-consumption" ng-model="o.trip.waypoints[o.trip.etape].theoretical.departure.consumption">kWu
                     </div>
                 </form>
             </div>

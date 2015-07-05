@@ -1,7 +1,31 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Diego">
     <words>
+      <w>arrivalconsumption</w>
+      <w>arrivaldistance</w>
+      <w>arrivaltime</w>
+      <w>arrivaltypical</w>
+      <w>chargeend</w>
+      <w>chargeendtime</w>
+      <w>chargeendtypical</w>
+      <w>chargestart</w>
+      <w>chargestarttime</w>
+      <w>chargestarttypical</w>
+      <w>chargestartypical</w>
+      <w>departureconsumption</w>
+      <w>departuredistance</w>
+      <w>departuretime</w>
+      <w>departuretypical</w>
+      <w>efffective</w>
+      <w>gettrip</w>
+      <w>gettrips</w>
+      <w>nextstep</w>
+      <w>savearrival</w>
+      <w>savechargeend</w>
+      <w>savechargestart</w>
+      <w>savedeparture</w>
       <w>tripid</w>
+      <w>wpid</w>
     </words>
   </dictionary>
 </component>

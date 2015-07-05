@@ -1,26 +1,6 @@
 <?php
     // let's bootstrap our application.
     include_once('includes/bootstrap.inc.php');
-
-
-    $ts = new tripstatus();
-    //$ts->retrieve(4);
-
-    $ts->att("objid", 4);
-
-    $ts->att("name_en", "updated after explicite object id");
-    $ts->save();
-
-    echo TripStatus::STATUS_SCHEDULED;
-
-    //sleep(5);
-    /*
-        $ts->att("name_en", "Started");
-        $ts->save();
-    */
-    exit();
-
-
     header('Content-Type: application/json');
 
 	// array_key_lower_case(
@@ -38,25 +18,17 @@
 			}
             */
 			
-			$d[] = array('id' =>  4,
-					     'date' =>  '19-04-2015',
-					     'name' => 'La Vielle Ferme - Thuis',
+			$d[] = array('id' =>  5,
+					     'date' =>  '2015-07-09',
+					     'name' => 'Thuis - La Treve - via autoroute de soleil',
+                         'statusid' => 1,
 					     'status' => 'Gepland'
             );
-            $d[] = array('id' => 3,
-					     'date' => '18-04-2015',
-					     'name' => 'La Treve - La Vielle Ferme (via Orange)',
+            $d[] = array('id' => 6,
+					     'date' => '2015-07-09',
+					     'name' => 'Thuis - La Treve - via Auxerre',
+                         'statusid' => 1,
 					     'status'=> 'Gepland'
-            );
-            $d[] = array('id' => 2,
-                         'date' => '18-04-2015',
-                         'name' => 'La Treve - La Vielle Ferme (via Nimes)',
-                         'status' => 'Bezig'
-            );
-            $d[] = array('id' => 1,
-					     'date' => '10-04-2015',
-					     'name' => 'Thuis - La Treve (via Metz)',
-                         'status' => 'Beeindigd'
             );
             //echo $d;
 			echo json_encode($d);
@@ -77,8 +49,19 @@
             //-------------------------------------
             // get other parameters
             $tripId = strtolower($_REQUEST["tripid"]);
+            $wpId = strtolower($_REQUEST["wpid"]);
+            $arrivaltypical = strtolower($_REQUEST["arrivaltypical"]);
+            $arrivaldistance = strtolower($_REQUEST["arrivaldistance"]);
+            $arrivalconsumption = strtolower($_REQUEST["arrivalconsumption"]);
 
             // do the update
+            $wp = new waypoint();
+            $wp->retrieve($wpId);
+            $wp->att("arrivaldistance", $arrivaldistance);
+            $wp->att("arrivaltypical", $arrivaltypical);
+            $wp->att("arrivalconsumption", $arrivalconsumption);
+            $wp->att("arrivaltime", time());
+            $wp->save();
 
             // retrieve the data
             echo json_encode(GetTripDetail($tripId));
@@ -88,8 +71,15 @@
             //-------------------------------------
             // get other parameters
             $tripId = strtolower($_REQUEST["tripid"]);
+            $wpId = strtolower($_REQUEST["wpid"]);
+            $chargestartypical = strtolower($_REQUEST["chargestarttypical"]);
 
             // do the update
+            $wp = new waypoint();
+            $wp->retrieve($wpId);
+            $wp->att("chargestarttypical", $chargestartypical);
+            $wp->att("chargestarttime", time());
+            $wp->save();
 
             // retrieve the data
             echo json_encode(GetTripDetail($tripId));
@@ -99,8 +89,15 @@
             //-------------------------------------
             // get other parameters
             $tripId = strtolower($_REQUEST["tripid"]);
+            $wpId = strtolower($_REQUEST["wpid"]);
+            $chargeendtypical = strtolower($_REQUEST["chargeendtypical"]);
 
             // do the update
+            $wp = new waypoint();
+            $wp->retrieve($wpId);
+            $wp->att("chargeendtypical", $chargeendtypical);
+            $wp->att("chargeendtime", time());
+            $wp->save();
 
             // retrieve the data
             echo json_encode(GetTripDetail($tripId));
@@ -110,8 +107,19 @@
             //-------------------------------------
             // get other parameters
             $tripId = strtolower($_REQUEST["tripid"]);
+            $wpId = strtolower($_REQUEST["wpid"]);
+            $departuretypical = strtolower($_REQUEST["departuretypical"]);
+            $departuredistance = strtolower($_REQUEST["departuredistance"]);
+            $departureconsumption = strtolower($_REQUEST["departureconsumption"]);
 
             // do the update
+            $wp = new waypoint();
+            $wp->retrieve($wpId);
+            $wp->att("departuredistance", $departuredistance);
+            $wp->att("departuretypical", $departuretypical);
+            $wp->att("departureconsumption", $departureconsumption);
+            $wp->att("departuretime", time());
+            $wp->save();
 
             // retrieve the data
             echo json_encode(GetTripDetail($tripId));
@@ -459,18 +467,18 @@ function GetTripDetail($tripId){
     //-----------------------------------------
 
     // destination
-    $dest[] = array('id' => 101, 'location' => '46.346553, 4.850173', 'description' => 'SuC Macon, France-1');
+    $dest[] = array('id' => 101, 'location' => '46.346553, 4.850173', 'description' => 'SuC Macon, France 2');
     $dest[] = array('id' => 102, 'location' => '47.85183, 3.542802', 'description' => 'SuC Auxerre, France');
     $dest[] = array('id' => 103, 'location' => '49.208728, 2.605788', 'description' => 'SuC Senlis, France');
     $dest[] = array('id' => 104, 'location' => '51.019861, 3.734917', 'description' => 'SuC Ghent, Belgium');
     $dest[] = array('id' => 10, 'location' => '51.3257132, 4.5685887', 'description' => 'Home, Belgium');
 
     // selected trip
-    $trip = array('id' =>  4, 'date' =>  '19-04-2015', 'status' => 0, 'name' => 'La Vielle Ferme - Thuis', 'theoreticalstarttime' => '10:00');
+    $trip = array('id' =>  5, 'date' =>  '2015-07-09', 'status' => 1, 'name' => 'Thuis - La Treve - via autoroute de soleil', 'theoreticalstarttime' => '2:00');
 
     // waypoints of a selected trip
-    $wps[] = array('tripid'=> 4, 'wpid' => 41, 'destinationid' => 101, 'type' => 0, 'status' => 0
-        , 'theoreticaldistance' => '', 'theoreticaltypical' => '', 'theoreticalconsumption' => '', 'theoreticaldrivetime' => '0:00', 'theoreticalchargetime' => '0:00', 'theoreticalchargeneeded' => 340
+    $wps[] = array('tripid'=> 5, 'wpid' => 1, 'destinationid' => 101, 'type' => 0, 'status' => 3
+        , 'theoreticaldistance' => '', 'theoreticaltypical' => '', 'theoreticalconsumption' => '', 'theoreticaldrivetime' => '', 'theoreticalchargetime' => '', 'theoreticalchargeneeded' => 380
         , 'arrivaldistance' => 0, 'arrivaltypical' => 0, 'arrivalconsumption' => 0, 'arrivaltime' => '0:00'
         , 'chargestarttypical' => 0, 'chargestarttime' => '0:00'
         , 'chargeendtypical' => 0, 'chargeendtime' => '0:00'

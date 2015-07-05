@@ -87,6 +87,7 @@
                             $sql .= ", UNIX_TIMESTAMP(" . $att->name . ") as " . $att->name;
                             break;
 
+                        case "decimal":
                         case "varchar":
                         case "bigint":
                         case "int":
@@ -183,15 +184,22 @@
                             case "datetime":
                             case "date":
                             case "time":
-                                // timestamps are in unixtimestamp in php
-                                $sql .= ", FROM_UNIXTIME(" . $this->att($att->name) . ")";
-                                break;
+                                if ($this->att($att->name) == null){
+                                    $sql .= ", NULL";
+                                    break;
+                                }
+                                else{
+                                    // timestamps are in unixtimestamp in php
+                                    $sql .= ", FROM_UNIXTIME(" . $this->att($att->name) . ")";
+                                    break;
+                                }
 
                             case "varchar":
                             case "bigint":
                             case "int":
                             case "tinyint":
                             case "text":
+                            case "decimal":
                                 $sql .= ", " . DB::qstr($this->att($att->name));
                                 break;
 
