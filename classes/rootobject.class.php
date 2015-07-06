@@ -124,6 +124,23 @@
                 return $this->attributevalues[$attribute]["value"];
             }
         }
+        
+        /**
+         *  setter for an array of attributes...
+         *  to be called as follows:
+         *    $object->atts(array(
+         *      "att1" => "val1",
+         *      "att2" => "val2"
+         *    ));
+         */
+        public function atts($atts) {
+            $isok = true;
+            
+            foreach($atts as $k => $v) {
+                if(!$this->att($k, $v)) $isok = false;
+            }
+            return $isok;
+        }
 
         public function retrieve($objid)
         {
