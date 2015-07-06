@@ -46,12 +46,16 @@
             
             foreach ($this->columns as $att) {
                 if (in_array($att, $this->attributes)) {
+                    if($sql != "SELECT ") { 
+                        // not the first attribute we're selecting...
+                        $sql .= ", "; 
+                    }
                     switch ($this->attributes[$att]->type) {
                         case "datetime":
                         case "date":
                         case "time":
                             // timestamps are in unixtimestamp in php
-                            $sql .= ", UNIX_TIMESTAMP(" . $this->attributes[$att]->name . ") as " . $this->attributes[$att]->name;
+                            $sql .= " UNIX_TIMESTAMP(" . $this->attributes[$att]->name . ") as " . $this->attributes[$att]->name;
                             break;
 
                         case "decimal":
@@ -60,7 +64,7 @@
                         case "int":
                         case "tinyint":
                         case "text":
-                            $sql .= ", " . $this->attributes[$att]->name;
+                            $sql .= " " . $this->attributes[$att]->name;
                             break;
 
                         default:
