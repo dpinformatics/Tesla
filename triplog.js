@@ -4,9 +4,6 @@
     var app = angular.module('denja', ['ngRoute']);
 
 
-
-
-
     app.factory('TeslaTripService', ['$interval', '$http', function($interval, $http) {
 		var d = {controllermethods: {}
             , status:	[
@@ -24,11 +21,12 @@
                     }
                 ]
             , activeobject: 1
-            , trips: [{"id":5,"date":"2015-07-09","name":"Thuis - La Treve - via autoroute de soleil (1)","statusid":1,"status":"Gepland"},{"id":6,"date":"2015-07-09","name":"Thuis - La Treve - via Auxerre (1)","statusid":1,"status":"Gepland"}]
+            //, trips: [{"id":5,"date":"2015-07-09","name":"Thuis - La Treve - via autoroute de soleil (1)","statusid":1,"status":"Gepland"}]
+            //, trip: {"id":"1","desc":"test","statusid":4,"etape":-1,"waypoints":null}
 			};
 
         //d.trips = '[{"id":5,"date":"2015-07-09","name":"Thuis - La Treve - via autoroute de soleil","statusid":1,"status":"Gepland"},{"id":6,"date":"2015-07-09","name":"Thuis - La Treve - via Auxerre","statusid":1,"status":"Gepland"}]';
-        d.trip = '';
+        //d.trip = '';
 
         d.controllermethods.gettrips = function () {
             console.debug('gettrips method called');
@@ -56,7 +54,7 @@
             $http.get(url)
                 .success(function (data) {
                     d.trip = data;
-                    //console.debug('after rows d.trip :' + + d.trip.length + ' - ' + d.trip.id + ' - ' + d.trip.desc);
+                    console.debug('after rows d.trip :' + + d.trip.length + ' - ' + d.trip.id + ' - ' + d.trip.desc);
                 })
                 .error(function (data) {
                     alert('error in ' + method + ' - ' + data);
@@ -176,7 +174,7 @@
 
             this.gotolist = function(){
                 this.m.gettrips();
-                this.m.gettrip(0);
+                this.m.gettrip(1);
                 this.view = 'list';
                 this.activetrip = 0;
                 this.waypointview = 0;
@@ -188,15 +186,9 @@
             this.status = TeslaTripService.status;
 
             // initialisation
-            //this.gotolist();
-            //console.debug('before get ' + this.trips.length);
-            this.trips = TeslaTripService.trips;
-            //this.m.gettrips();
-            //console.debug('after get ' + this.trips.length);
-
-            this.trip = TeslaTripService.trip;
-
-            this.view = 'list';
+            this.gotolist();
+            //this.trips = TeslaTripService.trips;
+            //this.trip = TeslaTripService.trip;
         }
     ]);
 

@@ -41,21 +41,19 @@
         public function getAllObjectsArray($filter, $columns = null) {
             // if no columns are passed in, we're returning them ALL
             if(!$columns) $columns = array_keys($this->attributes);
+            //var_dump($columns);
             
-            $sql = "SELECT ";
+            $sql = "SELECT objid as 'auto_added_objectid' ";
             
-            foreach ($this->columns as $att) {
-                if (in_array($att, $this->attributes)) {
-                    if($sql != "SELECT ") { 
-                        // not the first attribute we're selecting...
-                        $sql .= ", "; 
-                    }
+            foreach ($columns as $att) {
+                if (in_array($att, array_keys($this->attributes))) {
+
                     switch ($this->attributes[$att]->type) {
                         case "datetime":
                         case "date":
                         case "time":
                             // timestamps are in unixtimestamp in php
-                            $sql .= " UNIX_TIMESTAMP(" . $this->attributes[$att]->name . ") as " . $this->attributes[$att]->name;
+                            $sql .= ", UNIX_TIMESTAMP(" . $this->attributes[$att]->name . ") as " . $this->attributes[$att]->name;
                             break;
 
                         case "decimal":
@@ -64,7 +62,7 @@
                         case "int":
                         case "tinyint":
                         case "text":
-                            $sql .= " " . $this->attributes[$att]->name;
+                            $sql .= ", " . $this->attributes[$att]->name;
                             break;
 
                         default:
@@ -83,9 +81,11 @@
             
             $return = array();
             while(!$rs->EOF) {
-                $return[] = $rs->fields;
+                $return[$rs->fields['auto_added_objectid']] = $rs->fields;
+                unset($return[$rs->fields['auto_added_objectid']]['auto_added_objectid']);
                 $rs->MoveNext();
             }
+            //var_dump($return);
             return $return;
             
         }

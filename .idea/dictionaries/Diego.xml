@@ -29,8 +29,11 @@
       <w>savechargestart</w>
       <w>savedeparture</w>
       <w>statusid</w>
+      <w>theoreticalchargeneeded</w>
       <w>theoreticalconsumption</w>
       <w>theoreticaldistance</w>
+      <w>theoreticaldrivetime</w>
+      <w>theoreticalstarttime</w>
       <w>theoreticaltypical</w>
       <w>totalchargetime</w>
       <w>totalconsumption</w>
