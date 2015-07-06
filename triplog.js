@@ -8,490 +8,30 @@
 
 
     app.factory('TeslaTripService', ['$interval', '$http', function($interval, $http) {
-		var d = {
-			trips:[{"id":5,"date":"2015-07-09","name":"Thuis - La Treve - via autoroute de soleil(1)","statusid":1,"status":"Gepland"}
-                  ,{"id":6,"date":"2015-07-09","name":"Thuis - La Treve - via Auxerre(1)","statusid":1,"status":"Gepland"}
-               // [{"id":5,"date":"2015-07-09","name":"Thuis - La Treve - via autoroute de soleil","statusid":1,"status":"Gepland"}
-               // ,{"id":6,"date":"2015-07-09","name":"Thuis - La Treve - via Auxerre","statusid":1,"status":"Gepland"}]
-            ]
-            ,
-            trip: {
-                id: 5,
-                desc: 'Thuis - La Treve - via autoroute de soleil',
-                etape: 0,
-                statusid: 3,
-                waypoints: [
-                    {name: 'Thuis',
-                        id: 1,
-                        location: '',
-                        overview: {
-                            distance: '',
-                            totaldistance: '',
-                            typical: '',
-                            totaltypical: '',
-                            consumption: '',
-                            totalconsumption: '',
-                            averageconsumption: '',
-                            drivetime: '',
-                            totaldrivetime: '',
-                            chargetime: '',
-                            totalchargetime: '',
-                            chargeneeded: 380,
-                            arrivaltime: '',
-                            departuretime: '2:00'
-                        },
-                        theoretical: {
-                            arrival: {
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            },
-                            chargestart: {
-                                typical: 0,
-                                time: 0
-                            },
-                            chargeend: {
-                                typical: 0,
-                                time: 0
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 380,
-                                consumption: 0,
-                                time: '2:00'
-                            }
-                        },
-                        efffective: {
-                            arrival: {
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: ''
-                            },
-                            chargestart: {
-                                typical: 0,
-                                time: ''
-                            },
-                            chargeend: {
-                                typical: 0,
-                                time: ''
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: ''
-                            }
-                        }
+		var d = {controllermethods: {}
+            , status:	[
+                    {id: 0,
+                        description: 'onderweg naar'
                     },
-                    {name: 'SuC Metz',
-                        id: 2,
-                        location: '',
-                        overview: {
-                            distance: 322.5,
-                            totaldistance: 322.5,
-                            typical: 373,
-                            totaltypical: 373,
-                            consumption: 70.0,
-                            totalconsumption: 70.0,
-                            averageconsumption: 217,
-                            drivetime: '3:15',
-                            totaldrivetime: '3:15',
-                            chargetime: '0:10',
-                            totalchargetime: '0:10',
-                            chargeneeded: 100,
-                            arrivaltime: '5:15',
-                            departuretime: '5:25'
-                        },
-                        theoretical: {
-                            arrival: {
-                                distance: 322.5,
-                                typical: 7,
-                                consumption: 70.0,
-                                time: '5:15'
-                            },
-                            chargestart: {
-                                typical: 7,
-                                time: '5:15'
-                            },
-                            chargeend: {
-                                typical: 100,
-                                time: '5:25'
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 100,
-                                consumption: 0,
-                                time: '5:25'
-                            }
-                        },
-                        efffective: {
-                            arrival: {
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: ''
-                            },
-                            chargestart: {
-                                typical: 0,
-                                time: ''
-                            },
-                            chargeend: {
-                                typical: 0,
-                                time: ''
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            }
-                        }
+                    {id: 1,
+                        description: 'aangekomen in'
                     },
-                    {name: 'SuC Nancy',
-                        id: 3,
-                        location: '',
-                        overview: {
-                            distance: 209.6,
-                            totaldistance: 441.8,
-                            typical: 260,
-                            totaltypical: 583,
-                            consumption: 48.0,
-                            totalconsumption: 108.0,
-                            averageconsumption: 229,
-                            drivetime: '2:10',
-                            totaldrivetime: '4:15',
-                            chargetime: '0:50',
-                            totalchargetime: '1:30',
-                            chargeneeded: 330,
-                            arrivaltime: '14:55',
-                            departuretime: '15:45'
-                        },
-                        theoretical: {
-                            arrival: {
-                                distance: 209.6,
-                                typical: 20,
-                                consumption: 48.0,
-                                time: '2:10'
-                            },
-                            chargestart: {
-                                typical: 20,
-                                time: '14:55'
-                            },
-                            chargeend: {
-                                typical: 330,
-                                time: '15:45'
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 330,
-                                consumption: 0,
-                                time: '15:45'
-                            }
-                        },
-                        efffective: {
-                            arrival: {
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            },
-                            chargestart: {
-                                typical: 0,
-                                time: 0
-                            },
-                            chargeend: {
-                                typical: 0,
-                                time: 0
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            }
-                        }
+                    {id: 2,
+                        description: 'aan het laden in'
                     },
-                    {name: 'SuC Nuits-Saint-Georges',
-                        id: 4,
-                        location: '',
-                        overview: {
-                            distance: 209.6,
-                            totaldistance: 441.8,
-                            typical: 260,
-                            totaltypical: 583,
-                            consumption: 48.0,
-                            totalconsumption: 108.0,
-                            averageconsumption: 229,
-                            drivetime: '2:10',
-                            totaldrivetime: '4:15',
-                            chargetime: '0:50',
-                            totalchargetime: '1:30',
-                            chargeneeded: 330,
-                            arrivaltime: '14:55',
-                            departuretime: '15:45'
-                        },
-                        theoretical: {
-                            arrival: {
-                                distance: 209.6,
-                                typical: 20,
-                                consumption: 48.0,
-                                time: '2:10'
-                            },
-                            chargestart: {
-                                typical: 20,
-                                time: '14:55'
-                            },
-                            chargeend: {
-                                typical: 330,
-                                time: '15:45'
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 330,
-                                consumption: 0,
-                                time: '15:45'
-                            }
-                        },
-                        efffective: {
-                            arrival: {
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            },
-                            chargestart: {
-                                typical: 0,
-                                time: 0
-                            },
-                            chargeend: {
-                                typical: 0,
-                                time: 0
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            }
-                        }
-                    },
-                    {name: 'SuC Vienne',
-                        id: 5,
-                        location: '',
-                        overview: {
-                            distance: 209.6,
-                            totaldistance: 441.8,
-                            typical: 260,
-                            totaltypical: 583,
-                            consumption: 48.0,
-                            totalconsumption: 108.0,
-                            averageconsumption: 229,
-                            drivetime: '2:10',
-                            totaldrivetime: '4:15',
-                            chargetime: '0:50',
-                            totalchargetime: '1:30',
-                            chargeneeded: 330,
-                            arrivaltime: '14:55',
-                            departuretime: '15:45'
-                        },
-                        theoretical: {
-                            arrival: {
-                                distance: 209.6,
-                                typical: 20,
-                                consumption: 48.0,
-                                time: '2:10'
-                            },
-                            chargestart: {
-                                typical: 20,
-                                time: '14:55'
-                            },
-                            chargeend: {
-                                typical: 330,
-                                time: '15:45'
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 330,
-                                consumption: 0,
-                                time: '15:45'
-                            }
-                        },
-                        efffective: {
-                            arrival: {
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            },
-                            chargestart: {
-                                typical: 0,
-                                time: 0
-                            },
-                            chargeend: {
-                                typical: 0,
-                                time: 0
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            }
-                        }
-                    },
-                    {name: 'SuC Nimes',
-                        id: 6,
-                        location: '',
-                        overview: {
-                            distance: 238.4,
-                            totaldistance: 680.2,
-                            typical: 305,
-                            totaltypical: 888,
-                            consumption: 57.0,
-                            totalconsumption: 165.0,
-                            averageconsumption: 239,
-                            drivetime: '2:15',
-                            totaldrivetime: '6:30',
-                            chargetime: '0:10',
-                            totalchargetime: '1:40',
-                            chargeneeded: 110,
-                            arrivaltime: '18:00',
-                            departuretime: '18:10'
-                        },
-                        theoretical: {
-                            arrival: {
-                                distance: 238.4,
-                                typical: 15,
-                                consumption: 57.0,
-                                time: '2:15'
-                            },
-                            chargestart: {
-                                typical: 15,
-                                time: '18:00'
-                            },
-                            chargeend: {
-                                typical: 110,
-                                time: '18:10'
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 110,
-                                consumption: 0,
-                                time: '18:10'
-                            }
-                        },
-                        efffective: {
-                            arrival: {
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            },
-                            chargestart: {
-                                typical: 0,
-                                time: 0
-                            },
-                            chargeend: {
-                                typical: 0,
-                                time: 0
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            }
-                        }
-                    },
-                    {name: 'La Trêve',
-                        id: 7,
-                        location: '',
-                        overview: {
-                            distance: '80.0',
-                            totaldistance: 760.2,
-                            typical: 96,
-                            totaltypical: 984,
-                            consumption: 18.0,
-                            totalconsumption: 183.0,
-                            averageconsumption: 225,
-                            drivetime: '1:00',
-                            totaldrivetime: '7:30',
-                            chargetime: '',
-                            totalchargetime: '',
-                            chargeneeded: '',
-                            arrivaltime: '19:10',
-                            departuretime: ''
-                        },
-                        theoretical: {
-                            arrival: {
-                                distance: 80.0,
-                                typical: 14,
-                                consumption: 18.0,
-                                time: '1:00'
-                            },
-                            chargestart: {
-                                typical: 0,
-                                time: ''
-                            },
-                            chargeend: {
-                                typical: 0,
-                                time: ''
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: ''
-                            }
-                        },
-                        efffective: {
-                            arrival: {
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            },
-                            chargestart: {
-                                typical: 0,
-                                time: 0
-                            },
-                            chargeend: {
-                                typical: 0,
-                                time: 0
-                            },
-                            departure:{
-                                distance: 0,
-                                typical: 0,
-                                consumption: 0,
-                                time: 0
-                            }
-                        }
+                    {id: 3,
+                        description: 'klaar om te vertrekken in'
                     }
                 ]
-            },
-            status:	[
-                {id: 0,
-                    description: 'onderweg naar'
-                },
-                {id: 1,
-                    description: 'aangekomen in'
-                },
-                {id: 2,
-                    description: 'aan het laden in'
-                },
-                {id: 3,
-                    description: 'klaar om te vertrekken in'
-                }
-            ],
-
-            activeobject: 1,
-			controllermethods: {}
+            , activeobject: 1
+            , trips: [{"id":5,"date":"2015-07-09","name":"Thuis - La Treve - via autoroute de soleil (1)","statusid":1,"status":"Gepland"},{"id":6,"date":"2015-07-09","name":"Thuis - La Treve - via Auxerre (1)","statusid":1,"status":"Gepland"}]
 			};
 
+        //d.trips = '[{"id":5,"date":"2015-07-09","name":"Thuis - La Treve - via autoroute de soleil","statusid":1,"status":"Gepland"},{"id":6,"date":"2015-07-09","name":"Thuis - La Treve - via Auxerre","statusid":1,"status":"Gepland"}]';
+        d.trip = '';
+
         d.controllermethods.gettrips = function () {
-            //console.debug('gettrips method called');
+            console.debug('gettrips method called');
 
             // build urlString
             var url = 'server.php?action=gettrips';
@@ -501,11 +41,12 @@
             $http.get(url)
                 .success(function (data) {
                     d.trips =  data;
-                    //console.debug('after rows d.trips :' + d.trips.length + ' - ' + d.trips[0].id + ' - ' + d.trips[0].name);
+                    console.debug('after rows d.trips : ' + d.trips.length + ' trips - trip 1 = ' + d.trips[0].id + ' - "' + d.trips[0].name +'"');
                 })
                 .error(function (data) {
                     alert('error in ' + method + ' - ' + data);
                 });
+
         };
 
         var callServiceForTrip;
@@ -514,7 +55,7 @@
             //console.debug('before rows d.trip : ' + d.trip.length + ' - ' + d.trip.id + ' - ' + d.trip.desc);
             $http.get(url)
                 .success(function (data) {
-                    //d.trip = data;
+                    d.trip = data;
                     //console.debug('after rows d.trip :' + + d.trip.length + ' - ' + d.trip.id + ' - ' + d.trip.desc);
                 })
                 .error(function (data) {
@@ -524,7 +65,7 @@
 
 
         d.controllermethods.gettrip = function(tripid) {
-            //console.debug('gettrip method called');
+            console.debug('gettrip method called');
 
             // build urlString
             var url = 'server.php?action=gettrip&tripid=' + tripid;
@@ -607,6 +148,7 @@
             $('#myDeparture').modal('hide');
         };
 
+
         var nextstep = function(){
             d.trip.statusid ++;
             if (d.trip.statusid == 4){
@@ -624,42 +166,37 @@
         function($scope, TeslaTripService) {
 
             // Controller methods
-            this.date = "";
-            this.currentdate = function(){
-                this.date = new Date();
-            };
 
             this.gettrip = function(tripid){
                 console.debug('gettrip ' + tripid);
-                this.view = 'detail';
-                this.activetrip = tripid;
                 this.m.gettrip(tripid);
+                this.activetrip = tripid;
+                this.view = 'detail';
             };
 
             this.gotolist = function(){
+                this.m.gettrips();
+                this.m.gettrip(0);
                 this.view = 'list';
                 this.activetrip = 0;
                 this.waypointview = 0;
-                //this.m.gettrips();
             };
 
 
             // Controller process
             this.m = TeslaTripService.controllermethods;
+            this.status = TeslaTripService.status;
 
+            // initialisation
+            //this.gotolist();
             //console.debug('before get ' + this.trips.length);
             this.trips = TeslaTripService.trips;
-            this.m.gettrips();
+            //this.m.gettrips();
             //console.debug('after get ' + this.trips.length);
 
             this.trip = TeslaTripService.trip;
-		    this.status = TeslaTripService.status;
 
-
-			// initialisation
-			this.gotolist();
-
-
+            this.view = 'list';
         }
     ]);
 

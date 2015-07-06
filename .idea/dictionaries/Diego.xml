@@ -5,17 +5,21 @@
       <w>arrivaldistance</w>
       <w>arrivaltime</w>
       <w>arrivaltypical</w>
+      <w>averageconsumption</w>
       <w>chargeend</w>
       <w>chargeendtime</w>
       <w>chargeendtypical</w>
+      <w>chargeneeded</w>
       <w>chargestart</w>
       <w>chargestarttime</w>
       <w>chargestarttypical</w>
       <w>chargestartypical</w>
+      <w>chargetime</w>
       <w>departureconsumption</w>
       <w>departuredistance</w>
       <w>departuretime</w>
       <w>departuretypical</w>
+      <w>drivetime</w>
       <w>efffective</w>
       <w>gettrip</w>
       <w>gettrips</w>
@@ -24,8 +28,18 @@
       <w>savechargeend</w>
       <w>savechargestart</w>
       <w>savedeparture</w>
+      <w>statusid</w>
+      <w>theoreticalconsumption</w>
+      <w>theoreticaldistance</w>
+      <w>theoreticaltypical</w>
+      <w>totalchargetime</w>
+      <w>totalconsumption</w>
+      <w>totaldistance</w>
+      <w>totaldrivetime</w>
+      <w>totaltypical</w>
       <w>tripid</w>
       <w>wpid</w>
+      <w>wpnbr</w>
     </words>
   </dictionary>
 </component>
