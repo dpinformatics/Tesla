@@ -37,6 +37,54 @@
 
 
         }
+        
+        public function getAllObjectsArray($filter, $columns = null) {
+            // if no columns are passed in, we're returning them ALL
+            if(!$columns) $columns = array_keys($this->attributes);
+            
+            $sql = "SELECT ";
+            
+            foreach ($this->columns as $att) {
+                if (in_array($att, $this->attributes)) {
+                    switch ($this->attributes[$att]->type) {
+                        case "datetime":
+                        case "date":
+                        case "time":
+                            // timestamps are in unixtimestamp in php
+                            $sql .= ", UNIX_TIMESTAMP(" . $this->attributes[$att]->name . ") as " . $this->attributes[$att]->name;
+                            break;
+
+                        case "decimal":
+                        case "varchar":
+                        case "bigint":
+                        case "int":
+                        case "tinyint":
+                        case "text":
+                            $sql .= ", " . $this->attributes[$att]->name;
+                            break;
+
+                        default:
+                            throw new Exception("Datatype " . $this->attributes[$att]->type . " not supported for " . get_class($this) . "." . $this->attributes[$att]->name);
+                    }
+                }
+            }
+            
+            $sql .= " FROM " . $this->tableName();
+                    
+            if(strlen(trim($filter)) > 0) {
+                $sql .= " WHERE " . $filter;
+            }
+            
+            $rs = DB::Execute($sql);
+            
+            $return = array();
+            while(!$rs->EOF) {
+                $return[] = $rs->fields;
+                $rs->MoveNext();
+            }
+            return $return;
+            
+        }
 
 
         public function tableName()
