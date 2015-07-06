@@ -142,6 +142,8 @@
             );
         }
 
+        return array("trips" => $d);
+
         return $d;
 
     }
