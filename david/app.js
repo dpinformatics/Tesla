@@ -37,6 +37,7 @@
             this.view = 'list';
             this.methods = TeslaService.controllermethods;
             this.activetrip = 0;
+            this.activewaypoint = 0;
             this.status = [
                 {
                     id: 0,

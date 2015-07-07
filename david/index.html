@@ -72,13 +72,13 @@
                 <h3>We zijn {{tc.status[tc.trip.statusid].description}} {{tc.trip.waypoints[tc.trip.etape].name}}.</h3>
 
                 <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myArrival"
-                   ng-show="tc.trip.statusid == 0">Aankomst</a>
+                   ng-show="tc.trip.statusid == 0"><i class="fa fa-flag-checkered"></i> Aankomst</a>
                 <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeStart"
-                   ng-show="tc.trip.statusid == 1">Start laden</a>
+                   ng-show="tc.trip.statusid == 1"><i class="fa fa-bolt"></i> Start laden</a>
                 <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeEnd"
-                   ng-show="tc.trip.statusid == 2">Stop laden</a>
+                   ng-show="tc.trip.statusid == 2"><i class="fa fa-refresh"></i> Stop laden</a>
                 <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myDeparture"
-                   ng-show="tc.trip.statusid == 1 || tc.trip.statusid == 3">Vertrek</a>
+                   ng-show="tc.trip.statusid == 1 || tc.trip.statusid == 3"><i class="fa fa-car"></i> Vertrek</a>
 
             </div>
         </div>
@@ -100,7 +100,7 @@
                 </tr>
                 <tr ng-repeat="wp in tc.trip.waypoints">
                     <td><a class="open-WayPointDetail btn btn-info btn-lg" data-toggle="modal"
-                           data-target="#myWayPointDetail" data-wpid="{{$index}}" data-wp="{{wp}}">Detail</a></td>
+                           data-target="#myWayPointDetail" ng-click="tc.activewaypoint = $index">Detail</a></td>
                     <td class="ng-binding">{{wp.name}}</td>
                     <td class="ng-binding text-center">{{wp.overview.distance}}<br>
                         <small>{{wp.overview.totaldistance}}</small>
@@ -161,7 +161,13 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
-                <button type="button" class="btn btn-primary" ng-click="tc.savearrival();">Bewaren</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="tc.methods.servercall({action: 'savearrival',
+                    tripid: tc.trip.id,
+                    wpid: tc.trip.waypoints[tc.trip.etape].id,
+                    arrivaltypical: tc.trip.waypoints[tc.trip.etape].theoretical.arrival.typical,
+                    arrivaldistance: tc.trip.waypoints[tc.trip.etape].theoretical.arrival.distance,
+                    arrivalconsumption: tc.trip.waypoints[tc.trip.etape].theoretical.arrival.consumption})">Bewaren
+                </button>
             </div>
         </div>
     </div>
@@ -186,7 +192,11 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
-                <button type="button" class="btn btn-primary" ng-click="tc.savechargestart();">Bewaren</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="tc.methods.servercall({action: 'savechargestart',
+                    tripid: tc.trip.id,
+                    wpid: tc.trip.waypoints[tc.trip.etape].id,
+                    chargestarttypical: tc.trip.waypoints[tc.trip.etape].theoretical.chargestart.typical})">Bewaren
+                </button>
             </div>
         </div>
     </div>
@@ -211,7 +221,11 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
-                <button type="button" class="btn btn-primary" ng-click="tc.savechargeend();">Bewaren</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="tc.methods.servercall({action: 'savechargeend',
+                    tripid: tc.trip.id,
+                    wpid: tc.trip.waypoints[tc.trip.etape].id,
+                    chargeendtypical: tc.trip.waypoints[tc.trip.etape].theoretical.chargeend.typical})">Bewaren
+                </button>
             </div>
         </div>
     </div>
@@ -266,6 +280,30 @@
                     departuredistance: tc.trip.waypoints[tc.trip.etape].theoretical.departure.distance,
                     departureconsumption: tc.trip.waypoints[tc.trip.etape].theoretical.departure.consumption})">Bewaren
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myWayPointDetail" tabindex="-1" role="dialog" aria-labelledby="myWayPointDetailLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">
+                    <div name="wpTitle" id="wpTitle">Detail van <span class="label label-info">{{tc.trip.waypoints[tc.activewaypoint].name}}</span>
+                    </div>
+                </h4>
+            </div>
+            <div class="modal-body">
+                trip {{tc.activetrip}} - etape {{tc.trip.etape}} -- {{tc.activewaypoint}}
+                {{tc.trip.waypoints[tc.activewaypoint].name}}
+                <input type="text" name="wpId" id="wpId" value=""/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                <!-- button type="button" class="btn btn-primary" ng-click="o.m.savedeparture();">Bewaren</button -->
             </div>
         </div>
     </div>
