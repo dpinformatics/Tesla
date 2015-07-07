@@ -5,33 +5,273 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
     <script src="app.js"></script>
 
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <title>Tesla Logger</title>
 </head>
-<body ng-app="tesla" ng-controller="TeslaController">
-View: {{view}}
-<hr/>
+<body ng-app="tesla" ng-controller="TeslaController as tc" class="well">
+<div class="row">
+    <div class="block">
+        <h1>Tesla Log App</h1>
+    </div>
+</div>
 
-<div ng-show="view == 'list'">
-    <h1>Overzicht (geplande) trips</h1>
-    <table>
-        <tr>
-            <th>Date</th>
-            <th>Name</th>
-            <th>Status</th>
-        </tr>
-        <tr ng-repeat="trip in trips">
-            <td>{{trip.date}}</td>
-            <td>{{trip.name}}</td>
-            <td>{{trip.status}}</td>
-        </tr>
-    </table>
+<div ng-show="tc.view == 'list'">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Overzicht (geplande) trips</h1>
+            <a ng-click="tc.methods.servercall({action: 'gettrips'})" class="btn btn-large btn-primary"><i
+                    class="fa fa-refresh"></i> Refresh</a><br/><br/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-hover table-striped">
+                <tr>
+                    <th></th>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                </tr>
+                <tr ng-repeat="tr in tc.trips">
+                    <td><a ng-click="tc.changeview('view', tr.id)" class="btn btn-large btn-success"><i
+                            class="fa fa-search"></i> Details</a></td>
+                    <td>{{tr.date * 1000|date : 'dd-MM-yyyy'}}</td>
+                    <td>{{tr.name}}</td>
+                    <td>{{tr.status}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+
+<div ng-show="tc.view == 'view'">
+    <div class="row">
+        <div class="col-md-6 bg-info">
+            <a ng-click="tc.changeview('list', 0)" class="btn btn-large btn-danger"><i class="fa fa-undo"></i> Back to
+                list</a>
+        </div>
+        <div class="col-md-6 bg-info">
+            <select ng-change="tc.changeview('view', tc.activetrip)" ng-model="tc.activetrip"
+                    ng-options="trip.id as trip.name for trip in tc.trips" class="form-control">
+
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div ng-repeat="trip in tc.trips |filter: {id: tc.activetrip}">
+                <h1>{{trip.name}} <span class="label label-primary">{{trip.status}}</span></h1>
+                <i class="fa fa-calendar"></i> {{trip.status}} {{trip.date * 1000|date: 'dd-MM-yyyy'}}<br/><br/>
+
+                <h3>We zijn {{tc.status[tc.trip.statusid].description}} {{tc.trip.waypoints[tc.trip.etape].name}}.</h3>
+
+                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myArrival"
+                   ng-show="tc.trip.statusid == 0">Aankomst</a>
+                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeStart"
+                   ng-show="tc.trip.statusid == 1">Start laden</a>
+                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeEnd"
+                   ng-show="tc.trip.statusid == 2">Stop laden</a>
+                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myDeparture"
+                   ng-show="tc.trip.statusid == 1 || tc.trip.statusid == 3">Vertrek</a>
+
+            </div>
+        </div>
+        <div class="col-md-12">
+            <h2>Waypoints </h2>
+            <table class="table table-striped table-hover">
+                <tr class="bg-success">
+                    <th>&nbsp</th>
+                    <th>&nbsp</th>
+                    <th class="text-center">Afstand<br>km</th>
+                    <th class="text-center">Typical<br>km</th>
+                    <th class="text-center">Verbruik<br>kWh</th>
+                    <th class="text-center">Gemiddeld<br>kWh</th>
+                    <th class="text-center">Rijtijd<br>u</th>
+                    <th class="text-center">Laadtijd<br>u</th>
+                    <th class="text-center">Laden tot<br></th>
+                    <th class="text-center">Aankomst<br>u</th>
+                    <th class="text-center">Vertrek<br>u</th>
+                </tr>
+                <tr ng-repeat="wp in tc.trip.waypoints">
+                    <td><a class="open-WayPointDetail btn btn-info btn-lg" data-toggle="modal"
+                           data-target="#myWayPointDetail" data-wpid="{{$index}}" data-wp="{{wp}}">Detail</a></td>
+                    <td class="ng-binding">{{wp.name}}</td>
+                    <td class="ng-binding text-center">{{wp.overview.distance}}<br>
+                        <small>{{wp.overview.totaldistance}}</small>
+                    </td>
+                    <td class="ng-binding text-center">{{wp.overview.typical}}<br>
+                        <small>{{wp.overview.totaltypical}}</small>
+                    </td>
+                    <td class="ng-binding text-center">{{wp.overview.consumption}}<br>
+                        <small>{{wp.overview.totalconsumption}}</small>
+                    </td>
+                    <td class="ng-binding text-center">{{wp.overview.averageconsumption}}</td>
+                    <td class="ng-binding text-center">{{wp.overview.drivetime}}<br>
+                        <small>{{wp.overview.totaldrivetime}}</small>
+                    </td>
+                    <td class="ng-binding text-center">{{wp.overview.chargetime}}<br>
+                        <small>{{wp.overview.totalchargetime}}</small>
+                    </td>
+                    <td class="ng-binding text-center"><b>{{wp.overview.chargeneeded}}</b></td>
+                    <td class="ng-binding text-center">{{wp.overview.arrivaltime}}</td>
+                    <td class="ng-binding text-center">{{wp.overview.departuretime}}</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- Modals below -->
+<div class="modal fade" id="myArrival" tabindex="-1" role="dialog" aria-labelledby="myArrivalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title bg-info">Aankomst in {{tc.trip.waypoints[tc.trip.etape].name}}</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="arrival-typical" class="control-label">Typical range :</label>
+                        <input type="number" class="form-control" id="arrival-typical"
+                               ng-model="tc.trip.waypoints[tc.trip.etape].theoretical.arrival.typical">km
+                    </div>
+                    <div class="form-group">
+                        <label for="arrival-distance" class="control-label">Km-stand :</label>
+                        <input type="number" class="form-control" id="arrival-distance"
+                               ng-model="tc.trip.waypoints[tc.trip.etape].theoretical.arrival.distance">km
+                    </div>
+                    <div class="form-group">
+                        <label for="arrival-consumption" class="control-label">Verbruik :</label>
+                        <input type="number" class="form-control" id="arrival-consumption"
+                               ng-model="tc.trip.waypoints[tc.trip.etape].theoretical.arrival.consumption">kWh
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                <button type="button" class="btn btn-primary" ng-click="tc.savearrival();">Bewaren</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myChargeStart" tabindex="-1" role="dialog" aria-labelledby="myChargeStartLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title bg-info">Start laden in {{tc.trip.waypoints[tc.trip.etape].name}}</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="chargestart-typical" class="control-label">Typical range :</label>
+                        <input type="number" class="form-control" id="chargestart-typical"
+                               ng-model="tc.trip.waypoints[tc.trip.etape].theoretical.chargestart.typical">km
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                <button type="button" class="btn btn-primary" ng-click="tc.savechargestart();">Bewaren</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myChargeEnd" tabindex="-1" role="dialog" aria-labelledby="myChargeEndLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Stop laden in {{tc.trip.waypoints[tc.trip.etape].name}}</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="chargeend-typical" class="control-label">Typical range :</label>
+                        <input type="number" class="form-control" id="chargeend-typical"
+                               ng-model="tc.trip.waypoints[tc.trip.etape].theoretical.chargeend.typical">km
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                <button type="button" class="btn btn-primary" ng-click="tc.savechargeend();">Bewaren</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myDeparture" tabindex="-1" role="dialog" aria-labelledby="myDepartureLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Vertrek vanuit {{tc.trip.waypoints[tc.trip.etape].name}}</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="departure-typical" class="control-label">Typical range :</label>
+
+                        <div class="input-group">
+                            <input type="number" class="form-control input-lg" id="departure-typical"
+                                   ng-model="tc.trip.waypoints[tc.trip.etape].theoretical.departure.typical">
+                            <span class="input-group-addon">km</span>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="departure-distance" class="control-label">Km-stand :</label>
+
+                        <div class="input-group">
+                            <input type="number" class="form-control input-lg" id="departure-distance"
+                                   ng-model="tc.trip.waypoints[tc.trip.etape].theoretical.departure.distance">
+                            <span class="input-group-addon">km</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="departure-consumption" class="control-label">Verbruik :</label>
+
+                        <div class="input-group">
+                            <input type="number" class="form-control input-lg" id="departure-consumption"
+                                   ng-model="tc.trip.waypoints[tc.trip.etape].theoretical.departure.consumption">
+                            <span class="input-group-addon">kWh</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="tc.methods.servercall({action: 'savedeparture',
+                    tripid: tc.trip.id,
+                    wpid: tc.trip.waypoints[tc.trip.etape].id,
+                    departuretypical: tc.trip.waypoints[tc.trip.etape].theoretical.departure.typical,
+                    departuredistance: tc.trip.waypoints[tc.trip.etape].theoretical.departure.distance,
+                    departureconsumption: tc.trip.waypoints[tc.trip.etape].theoretical.departure.consumption})">Bewaren
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 </body>
-
 
 </html>
