@@ -38,17 +38,16 @@
             // get the data
             $http.get(url)
                 .success(function (data) {
-                    d.trips =  data;
+                    d.trips = data;
+                    //angular.extend(data, d.trips);
                     console.debug('after rows d.trips : ' + d.trips.length + ' trips - trip 1 = ' + d.trips[0].id + ' - "' + d.trips[0].name +'"');
                 })
                 .error(function (data) {
                     alert('error in ' + method + ' - ' + data);
                 });
-
         };
 
-        var callServiceForTrip;
-        callServiceForTrip = function (method, url) {
+        var callServiceForTrip = function (method, url) {
             console.debug('url=' + url);
             //console.debug('before rows d.trip : ' + d.trip.length + ' - ' + d.trip.id + ' - ' + d.trip.desc);
             $http.get(url)
@@ -154,9 +153,10 @@
                 d.trip.etape ++;
             }
         };
+        // get the data
+        d.controllermethods.gettrips();
+
         return d;
-
-
 
     }]);
 
@@ -173,22 +173,22 @@
             };
 
             this.gotolist = function(){
-                this.m.gettrips();
-                this.m.gettrip(1);
-                this.view = 'list';
+                setTimeout(this.m.gettrips(), 3000);
+                //this.m.gettrip(1);
                 this.activetrip = 0;
-                this.waypointview = 0;
+                this.view = 'list';
             };
 
 
             // Controller process
             this.m = TeslaTripService.controllermethods;
             this.status = TeslaTripService.status;
+            this.rows = TeslaTripService.rows;
+            this.trips = TeslaTripService.trips;
+            this.trip = TeslaTripService.trip;
 
             // initialisation
-            this.gotolist();
-            //this.trips = TeslaTripService.trips;
-            //this.trip = TeslaTripService.trip;
+            this.view = 'list';
         }
     ]);
 
