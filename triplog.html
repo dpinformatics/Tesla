@@ -13,14 +13,16 @@
   </style>
 </head>
 
-<body id="myBody" ng-app="denja" ng-controller="TeslaTripController as o" >
+<body id="myBody" ng-app="tesla" ng-controller="TeslaController" >
+<body ng-app="tesla" ng-controller="TeslaController">
+
 <div  class="row ">
 <div class="col-md-12">
     <div class="well ">
 
 		<div ng-show="o.view == 'list'">
             <h1 class="ng-binding bg-info"><a class="btn btn-info  btn-lg" ng-click="o.gotolist();">Refresh</a></h1>
-			<h1 class="bg-info">Overzicht trips ({{o.rows}})</h1>
+			<h1 class="bg-info">Overzicht trips</h1>
 			<table class="table table-hover table-striped">
 				<tbody><tr>
                     <th>&nbsp;</th>
@@ -201,7 +203,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
-                <button type="button" class="btn btn-primary" ng-click="o.m.savedeparture();">Bewaren</button>
+                <button type="button" class="btn btn-primary" ng-click="o.savedeparture();">Bewaren</button>
             </div>
         </div>
     </div>
