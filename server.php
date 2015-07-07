@@ -140,9 +140,10 @@
             , 'name' => $tr['name']
             , 'status' => $tripstatusses[$tr['statusid']]['name_en']
             );
+
         }
 
-        return array("trips" => $d);
+        return array("key" => "trips", "data" => $d);
 
         return $d;
 
@@ -284,5 +285,7 @@
         , 'etape' => $wpnbr
         , 'waypoints' => $dwp
         );
+
+        return array("key" => "trip", "data" => $d);
         return $d;
     }

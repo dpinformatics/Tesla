@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="On explicit save action" serverName="tesla.dpinformatics.be" uploadOnCheckin="7e9f412c-1a8b-4fb7-8b5f-fbd7902af4f5">
+  <component name="PublishConfigData" autoUpload="On explicit save action" serverName="tesla.dpinformatics.be">
     <serverData>
       <paths name="tesla.dpinformatics.be">
         <serverdata>
@@ -10,8 +10,6 @@
         </serverdata>
       </paths>
     </serverData>
-    <option name="myUploadOnCheckinName" value="tesla.dpinformatics.be" />
     <option name="myAutoUpload" value="ON_EXPLICIT_SAVE" />
   </component>
 </project>
-
