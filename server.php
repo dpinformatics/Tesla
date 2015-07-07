@@ -169,6 +169,7 @@
         $totalchargetime = 0;
         $wpnbr = -1;
         $statusid = 4;
+        $startdrivetime = $trip->att('theoreticalstarttime');
 
         // build the waypoints array
         $dwp = null;

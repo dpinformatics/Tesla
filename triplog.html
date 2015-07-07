@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-<!-- script src="/js/lib/dummy.js"></script -->
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<script src="triplog.js"></script>
-
 <head>
     <style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -20,7 +13,9 @@
   </style>
 </head>
 
-<body ng-app="denja" ng-controller="TeslaTripController as o" >
+<body id="myBody" ng-app="tesla" ng-controller="TeslaController" >
+<body ng-app="tesla" ng-controller="TeslaController">
+
 <div  class="row ">
 <div class="col-md-12">
     <div class="well ">
@@ -35,7 +30,7 @@
 					<th>Omschrijving</th>
 					<th>Status</th>
 				</tr>
-				<tr ng-repeat="tr in o.trips" >
+				<tr id="myList" ng-repeat="tr in o.trips" >
                     <td><a class="btn btn-info btn-lg" ng-click="o.gettrip(tr.id);">Detail</a></td>
 					<td >{{tr.date}}</td>
 					<td >{{tr.name}}</td>
@@ -208,7 +203,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
-                <button type="button" class="btn btn-primary" ng-click="o.m.savedeparture();">Bewaren</button>
+                <button type="button" class="btn btn-primary" ng-click="o.savedeparture();">Bewaren</button>
             </div>
         </div>
     </div>
@@ -234,4 +229,12 @@
 </div>
 
 </body>
+
+<!-- script src="/js/lib/dummy.js"></script -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="triplog.js"></script>
+
 </html>

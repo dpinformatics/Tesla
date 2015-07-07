@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<!-- script src="/js/lib/dummy.js"></script -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+<script>
+    (function() {
+
+        // let's define our module
+        var app = angular.module('denja', ['ngRoute']);
+
+
+        app.factory('TeslaTripService',  ['$interval', '$http', function( $interval, $http) {
+            var d = {controllermethods: {}
+                , activeobject: 1
+                //, trips: [{"id":5,"date":"2015-07-09","name":"Thuis - La Treve - via autoroute de soleil (1)","statusid":1,"status":"Gepland"}]
+                //, trip: {"id":"1","desc":"test","statusid":4,"etape":-1,"waypoints":null}
+            };
+
+            //d.trips = '[{"id":5,"date":"2015-07-09","name":"Thuis - La Treve - via autoroute de soleil","statusid":1,"status":"Gepland"},{"id":6,"date":"2015-07-09","name":"Thuis - La Treve - via Auxerre","statusid":1,"status":"Gepland"}]';
+            //d.trip = '';
+
+            d.controllermethods.gettrips = function () {
+                console.debug('gettrips method called');
+
+                // build urlString
+                var url = 'server.php?action=gettrips';
+                console.debug('url=' + url);
+
+                // get the data
+                $http.get(url)
+                        .success(function (data) {
+                            d.trips =  data;
+                            console.debug('after rows d.trips : ' + d.trips.length + ' trips - trip 1 = ' + d.trips[0].id + ' - "' + d.trips[0].name +'"');
+                        })
+                        .error(function (data) {
+                            alert('error in ' + method + ' - ' + data);
+                        });
+
+            };
+
+            return d;
+
+
+
+        }]);
+
+        app.controller('TeslaTripController', ['$scope', 'TeslaTripService',
+            function($scope, TeslaTripService) {
+
+                // Controller methods
+
+                this.gotolist = function(){
+                    this.m.gettrips()
+                };
+
+
+                // Controller process
+                this.m = TeslaTripService.controllermethods;
+
+                // initialisation
+                //this.gotolist();
+                this.m.gettrips()
+                this.trips = TeslaTripService.trips;
+                //this.trip = TeslaTripService.trip;
+                $scope.trips = TeslaTripService.trips;
+            }
+        ]);
+
+
+    })();
+
+
+</script>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+
+<body ng-app="denja" ng-controller="TeslaTripController as o" >
+<div  class="row ">
+    <div class="col-md-12">
+        <div class="well ">
+
+            <div >
+                <h1 class="ng-binding bg-info"><a class="btn btn-info  btn-lg" ng-click="o.gotolist();">Refresh</a></h1>
+                <h1 class="bg-info">Overzicht trips</h1>
+                <table class="table table-hover table-striped">
+                    <tbody><tr>
+                        <th>&nbsp;</th>
+                        <th>Datum</th>
+                        <th>Omschrijving</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr ng-repeat="tr in o.trips" >
+                        <td><a class="btn btn-info btn-lg" ng-click="o.gettrip(tr.id);">Detail</a></td>
+                        <td >{{tr.date}}</td>
+                        <td >{{tr.name}}</td>
+                        <td >{{tr.status}}</td>
+                    </tr>
+                    </tbody></table>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
