@@ -161,123 +161,185 @@
         $waypoints = $waypoint->getAllObjectsArray('tripid = '. DB::qstr($tripId));
 
         // make the result array
-        // initialise totals
-        $totaldistance = 0;
-        $totaltypical = 0;
-        $totalconsumption = 0;
-        $totaldrivetime = 0;
-        $totalchargetime = 0;
         $wpnbr = -1;
         $statusid = 4;
+
+        $wpdistance = '';
+        $totaldistance = 0;
+        $wptypical = '';
+        $totaltypical = 0;
+        $wpconsumption = '';
+        $totalconsumption = 0;
+        $wpaverage = '';
+        $wpdrivetime = '';
+        $totaldrivetime = 0;
+        $wpchargetime = '';
+        $totalchargetime = 0;
         $startdrivetime = $trip->att('theoreticalstarttime');
+        $wpchargeneeded = 0;
+        $wpchargestarted = 0;
+        $wparrivaltime = '';
+        $wpdeparturetime = '';
 
         // build the waypoints array
         $dwp = null;
 
-        foreach ($waypoints as &$wp) {
-            if ($statusid == 4){
-                $wpnbr++;
-                $statusid = $wp['statusid'];
-            }
-            // make running totals
-            if ($wp['statusid'] == 0){
-                $totaldistance += $wp['theoreticaldistance'];
-                $totaltypical += $wp['theoreticaltypical'];
-                $totalconsumption += $wp['theoreticalconsumption'];
-                $wpdistance = $wp['theoreticaldistance'];
-                $wptypical = $wp['theoreticaltypical'];
-                $wpconsumption = $wp['theoreticalconsumption'];
-            }
-            else{
-                $totaldistance += $wp['arrivaldistance'];
-                $totaltypical += $wp['arrivaltypical'];
-                $totalconsumption += $wp['arrivalconsumption'];
-                $wpdistance = $wp['arrivaldistance'];
-                $wptypical = $wp['arrivaltypical'];
-                $wpconsumption = $wp['arrivalconsumption'];
-            }
-            if ($wpdistance <> 0){
-                $wpaverage = round( ($wpconsumption * 1000)/ $wpdistance, 0);
-            }
-            else{
-                $wpaverage = '';
-            }
-            // to calculate
-            $wpdrivetime = '';
-            $totaldrivetime = '';
-            $wpchargetime = '';
-            $totalchargetime = '';
-            $chargeneeded = $wp['theoreticalchargeneeded'];
-            $wparrivaltime = '';
-            $wpdeparturetime = '';
+        //foreach ($waypoints as &$wp) {
+         for($i = 0; $i < count($waypoints); $i++) {
+
+                $wp = $waypoints[array_keys($waypoints)[$i]];
+             //var_dump($wp); exit();
+                if ($statusid == 4){
+                    $wpnbr++;
+                    $statusid = $wp['statusid'];
+                }
+                if ($i == 0){
+                    // first waypoint initialize counters
+                    if ($wp['statusid'] < 4){
+                        $startdrivetime = mktime(2, 0, 0, 1,1 , 2000);//$trip->att('theoreticalstarttime');
+                        $wpchargeneeded = $wp['theoreticalchargeneeded'];
+                    }
+                    else{
+                        $startdrivetime = $wp['departuretime'];
+                        $wpchargeneeded = $wp['departuretypical'];
+                    }
+                    $wpdeparturetime = date('H:i', $startdrivetime);
+                    $wpchargestarted = $wpchargeneeded;
+                }
+                else{
+                    // make running totals
+                    if ($wp['statusid'] == 0){
+                        $wpdistance = $wp['theoreticaldistance'];
+                        $wptypical = $wp['theoreticaltypical'];
+                        $wpconsumption = $wp['theoreticalconsumption'];
+                        $wparrivaltime = $startdrivetime + ($wp['theoreticaldrivetime'] * 60);
+                    }
+                    else{
+                        $wpdistance = $wp['arrivaldistance'];
+                        $wptypical = ($wpchargestarted - $wp['arrivaltypical']);;
+                        $wpconsumption = $wp['arrivalconsumption'];
+                        $wparrivaltime = $wp['arrivaltime'];
+                    }
+                    $totaldistance += $wpdistance;
+                    $totaltypical += $wptypical;
+                    $totalconsumption += $wpconsumption;
+                    $startdrivetime = $wparrivaltime;
+
+                    if ($wpdistance <> 0){
+                        $wpaverage = round( ($wpconsumption * 1000)/ $wpdistance, 0);
+                    }
+                    else{
+                        $wpaverage = '';
+                    }
+
+                    if ($wp['statusid'] < 3){
+                        $startdrivetime = $wparrivaltime + ($wp['theoreticalchargetime'] * 60);
+                        $wpchargeneeded = $wp['theoreticalchargeneeded'];
+                    }
+                    if ($wp['statusid'] == 3){
+                        $startdrivetime = $wp['chargeendtime'];
+                        $wpchargeneeded = $wp['chargeendtypical'];
+                    }
+
+                    if ($wp['statusid'] == 4){
+                        $wpchargeneeded = $wp['departuretypical'];
+                        $startdrivetime = $wp['departuretime'];
+                    }
+                    // to calculate
+                    $wpdrivetime = $wp['theoreticaldrivetime'];
+                    $totaldrivetime += $wpdrivetime;
+                    $wpchargetime = $wp['theoreticalchargetime'];
+                    $totalchargetime += $wpchargetime;
 
 
-            // build the waypoint
-            $dwp[] = array('id' => $wp['objid']
-            , 'location' => ''
-            , 'name' => $wp['destination']
-            , 'overview' =>
-                    array('distance' => $wpdistance
-                    , 'totaldistance' => $totaldistance
-                    , 'typical' => $wptypical
-                    , 'totaltypical' => $totaltypical
-                    , 'consumption' => $wpconsumption
-                    , 'totalconsumption' => $totalconsumption
-                    , 'averageconsumption' => $wpaverage
-                    , 'drivetime' => $wpdrivetime
-                    , 'totaldrivetime' => $totaldrivetime
-                    , 'chargetime' => $wpchargetime
-                    , 'totalchargetime' => $totalchargetime
-                    , 'chargeneeded' => $chargeneeded
-                    , 'arrivaltime' => $wparrivaltime
-                    , 'departuretime' => $wpdeparturetime
-                    )
-            , 'theoretical' =>
-                    array('arrival' =>
-                        array('distance' => $wp['theoreticaldistance']
-                            , 'typical' => $wp['theoreticaltypical']
-                            , 'consumption' => $wp['theoreticalconsumption']
+
+                    //format the output
+                    $wpdistance = number_format($wpdistance, 1, ',', '.');
+                    $wptypical = number_format($wptypical, 0);
+                    $wpconsumption = number_format($wpconsumption, 1, ',', '.');
+                    $wpdrivetime = date ('H:i', mktime(0 ,$wpdrivetime, 0, 1, 1, 2000));
+                    if ($wpchargetime > 0){
+                        $wpchargetime = date('H:i', mktime(0, $wpchargetime, 0, 1, 1, 2000));
+                    }
+                    else{
+                        $wpchargetime = '';
+                    }
+
+                    $wparrivaltime = date ('H:i', $wparrivaltime);
+                    $wpdeparturetime = date ('H:i', $startdrivetime);
+                }
+
+
+                // build the waypoint
+                $dwp[] = array('id' => $wp['objid']
+                , 'location' => ''
+                , 'name' => $wp['destination']
+                , 'statusid' => $wp['statusid']
+                , 'overview' =>
+                        array('distance' => $wpdistance
+                        , 'totaldistance' => number_format($totaldistance, 1, ',', '.')
+                        , 'typical' => $wptypical
+                        , 'totaltypical' => $totaltypical
+                        , 'consumption' => $wpconsumption
+                        , 'totalconsumption' => number_format($totalconsumption, 1, ',', '.')
+                        , 'averageconsumption' => $wpaverage
+                        , 'drivetime' => $wpdrivetime
+                        , 'totaldrivetime' => date('H:i', mktime(0, $totaldrivetime, 0, 1, 1, 2000))
+                        , 'chargetime' => $wpchargetime
+                        , 'totalchargetime' => date('H:i', mktime(0, $totalchargetime, 0, 1, 1, 2000))
+                        , 'chargeneeded' => $wpchargeneeded
+                        , 'arrivaltime' => $wparrivaltime
+                        , 'departuretime' => $wpdeparturetime
+                        )
+                , 'theoretical' =>
+                        array('arrival' =>
+                            array('distance' => $wpdistance + 0.0
+                            , 'typical' => $wpchargestarted - $wp['theoreticaltypical']
+                            , 'consumption' => $wp['theoreticalconsumption'] + 0.0
                             , 'time' => $wp['theoreticaldrivetime']
+                            )
+                        , 'chargestart' =>
+                            array('typical' => $wpchargestarted - $wp['theoreticaltypical']
+                            , 'time' => ''
+                            )
+                        , 'chargeend' =>
+                            array('typical' => $wp['theoreticalchargeneeded'] + 0
+                            , 'time' => ''
+                            )
+                        , 'departure' =>
+                            array('distance' => 0
+                            , 'typical' => $wpchargeneeded + 0
+                            , 'consumption' => 0
+                            , 'time' => ''
+                            )
                         )
-                    , 'chargestart' =>
-                        array('typical' => ''
-                        , 'time' => ''
+                , 'efffective' =>
+                        array('arrival' =>
+                            array('distance' => $wp['arrivaldistance']
+                            , 'typical' => $wp['arrivaltypical']
+                            , 'consumption' => $wp['arrivalconsumption']
+                            , 'time' => $wp['arrivaltime']
+                            )
+                        , 'chargestart' =>
+                            array('typical' => $wp['chargestarttypical']
+                            , 'time' => $wp['chargestarttime']
+                            )
+                        , 'chargeend' =>
+                            array('typical' => $wp['chargeendtypical']
+                            , 'time' => $wp['chargeendtime']
+                            )
+                        , 'departure' =>
+                            array('distance' => $wp['departuredistance']
+                            , 'typical' => $wp['departuretypical']
+                            , 'consumption' => $wp['departureconsumption']
+                            , 'time' => $wp['departuretime']
+                            )
                         )
-                    , 'chargeend' =>
-                        array('typical' => $wp['theoreticalchargeneeded']
-                        , 'time' => ''
-                        )
-                    , 'departure' =>
-                        array('distance' => 0
-                        , 'typical' => $wp['theoreticalchargeneeded']
-                        , 'consumption' => 0
-                        , 'time' => ''
-                        )
-                    )
-            , 'efffective' =>
-                    array('arrival' =>
-                        array('distance' => $wp['arrivaldistance']
-                        , 'typical' => $wp['arrivaltypical']
-                        , 'consumption' => $wp['arrivalconsumption']
-                        , 'time' => $wp['arrivaltime']
-                        )
-                    , 'chargestart' =>
-                        array('typical' => $wp['chargestarttypical']
-                        , 'time' => $wp['chargestarttime']
-                        )
-                    , 'chargeend' =>
-                        array('typical' => $wp['chargeendtypical']
-                        , 'time' => $wp['chargeendtime']
-                        )
-                    , 'departure' =>
-                        array('distance' => $wp['departuredistance']
-                        , 'typical' => $wp['departuretypical']
-                        , 'consumption' => $wp['departureconsumption']
-                        , 'time' => $wp['departuretime']
-                        )
-                    )
-            );
-        }
+                );
+
+             $wpchargestarted = $wpchargeneeded;
+
+         }
 
         // final result
         $d = array('id' => $tripId
@@ -288,5 +350,5 @@
         );
 
         return array("key" => "trip", "data" => $d);
-        return $d;
+        //return $d;
     }
