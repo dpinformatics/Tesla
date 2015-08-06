@@ -196,7 +196,19 @@
                 if ($i == 0){
                     // first waypoint initialize counters
                     if ($wp['statusid'] < 4){
-                        $startdrivetime = mktime(2, 0, 0, 1,1 , 2000);//$trip->att('theoreticalstarttime');
+                        if ($tripId < 8){
+                            $startdrivetime = mktime(2, 0, 0, 1, 1 , 2000);//$trip->att('theoreticalstarttime');
+                        }
+                        if ($tripId == 8 || $tripId == 9){
+                            $startdrivetime = mktime(13, 0, 0, 1, 1 , 2000);//$trip->att('theoreticalstarttime');
+                        }
+                        if ($tripId == 10){
+                            $startdrivetime = mktime(10, 0, 0, 1, 1 , 2000);//$trip->att('theoreticalstarttime');
+                        }
+                        if ($tripId > 10){
+                            $startdrivetime = mktime(0, 0, 0, 1, 1 , 2000);//$trip->att('theoreticalstarttime');
+                        }
+
                         $wpchargeneeded = $wp['theoreticalchargeneeded'];
                     }
                     else{
