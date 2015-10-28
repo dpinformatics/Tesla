@@ -11,16 +11,54 @@
     </div>
 </div -->
 
+<!-- Login screen -->
+<div ng-show="tc.logindata.login == 'nok'">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="bg-info text-center">Welkom op trip logging en planning</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <form>
+                <div class="form-group">
+                    <label for="car" class="control-label">VIN :</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control input-lg" id="car" ng-model="tc.logindata.car">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="control-label">Paswoord :</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control input-lg" id="password" ng-model="tc.password">
+                    </div>
+                </div>
+            </form>
+            <div>
+                <button type="button" class="btn btn-lg btn-primary" ng-click="tc.login(tc.logindata.car, tc.password)"><i class="fa fa-sign-in"></i> Aanmelden</button>
+            </div>
+            <h3>
+                <label class="text-danger">{{tc.logindata.error}}</label>
+            </h3>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+
+<div ng-hide="tc.logindata.login == 'nok'">
+
 <!-- List of trips -->
 <div ng-show="tc.view == 'list'">
     <div class="row">
         <div class="col-md-12">
             <h1 class="bg-info">
-                <a ng-click="tc.methods.servercall({action: 'gettrips'})" class="btn btn-lg btn-primary">
-                    <i  class="fa fa-refresh"></i> Refresh
-                </a>
+                <a ng-click="tc.methods.servercall({action: 'gettrips'})" class="btn btn-lg btn-primary"><i  class="fa fa-refresh"></i> Verfrissen </a>
+                <!--a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myNewTrip" ng-show="tc.logindata.login == 'ok'"><i class="fa fa-file-o"></i> Log nieuwe trip</a-->
+                <a ng-hide="tc.logindata.login=='readonly'" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myNewTripPlan" ><i class="fa fa-file-o"></i> Plan nieuwe trip</a>
+                <a ng-hide="tc.logindata.login=='readonly'" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myNewTripLog" ><i class="fa fa-file-o"></i> Log nieuwe trip</a>
             </h1>
-            <h1 class="bg-info">Overzicht trips</h1>
+            <h1 class="bg-info">Overzicht trips voor VIN {{tc.logindata.car}}</h1>
         </div>
     </div>
     <div class="row">
@@ -43,11 +81,12 @@
     </div>
 </div>
 
-
 <!-- Detail for a trip -->
 <div ng-show="tc.view == 'view'">
     <h1 class="ng-binding bg-info"><a ng-click="tc.changeview('list', 0)" class="btn btn-lg btn-primary"><i class="fa fa-undo"></i>Terug naar overzicht</a> {{o.trip.desc}}</h1>
-    <!--div class="row">
+
+    <!--
+    <div class="row">
         <div class="col-md-6 bg-info">
             <a ng-click="tc.changeview('list', 0)" class="btn btn-btn-lg btn-danger"><i class="fa fa-undo"></i> Back to list</a>
         </div>
@@ -57,7 +96,9 @@
 
             </select>
         </div>
-    </div -->
+    </div>
+    -->
+
     <div class="row">
         <div class="col-md-12">
             <div ng-repeat="trip in tc.trips |filter: {id: tc.activetrip}">
@@ -65,11 +106,12 @@
                 <i class="fa fa-calendar"></i> {{trip.status}} {{trip.date * 1000|date: 'dd-MM-yyyy'}}<br/><br/>
 
                 <h3>We zijn {{tc.status[tc.trip.statusid].description}} {{tc.trip.waypoints[tc.trip.etape].name}}.</h3>
-                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myArrival" ng-show="tc.trip.statusid == 0"><i class="fa fa-flag-checkered"></i> Aankomst</a>
-                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeStart"ng-show="tc.trip.statusid == 1"><i class="fa fa-bolt"></i> Start laden</a>
-                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeEnd" ng-show="tc.trip.statusid == 2"><i class="fa fa-refresh"></i> Stop laden</a>
-                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myDeparture" ng-show="tc.trip.statusid == 1 || tc.trip.statusid == 3"><i class="fa fa-car"></i> Vertrek</a>
-
+                <div ng-hide="tc.logindata.login=='readonly'">
+                    <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myArrival" ng-show="tc.trip.statusid == 0"><i class="fa fa-flag-checkered"></i> Aankomst</a>
+                    <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeStart"ng-show="tc.trip.statusid == 1"><i class="fa fa-bolt"></i> Start laden</a>
+                    <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myChargeEnd" ng-show="tc.trip.statusid == 2"><i class="fa fa-refresh"></i> Stop laden</a>
+                    <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myDeparture" ng-show="tc.trip.statusid == 1 || tc.trip.statusid == 3"><i class="fa fa-car"></i> Vertrek</a>
+                </div>
             </div>
         </div>
         <div class="col-md-12">
@@ -121,6 +163,7 @@
     </div>
 </div>
 
+</div>
 
 <!-- Modals below -->
 <!-- Arrival -->
@@ -306,6 +349,73 @@
         </div>
     </div>
 </div>
+
+<!-- Log New Trip -->
+<div class="modal fade" id="myNewTripLog" tabindex="-1" role="dialog" aria-labelledby="myNewTripLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Start een nieuwe trip log
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="plandescription" class="control-label">Omschrijving :</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control input-lg" id="logdescription" ng-model="tc.description">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-lg btn-default" data-dismiss="modal">Sluiten</button>
+                <button type="button" class="btn btn-lg btn-primary" data-dismiss="modal" ng-click="tc.methods.servercall({action: 'newtriplog',
+                    description: tc.description})">Bewaren
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Plan New Trip -->
+<div class="modal fade" id="myNewTripPlan" tabindex="-1" role="dialog" aria-labelledby="myNewTripLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Plan een nieuwe trip
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="plandate" class="control-label">Geplande datum :</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control input-lg" id="plandate" ng-model="tc.date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="plandescription" class="control-label">Omschrijving :</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control input-lg" id="plandescription" ng-model="tc.description">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-lg btn-default" data-dismiss="modal">Sluiten</button>
+                <button type="button" class="btn btn-lg btn-primary" data-dismiss="modal" ng-click="tc.methods.servercall({action: 'newtriplog',
+                    description: tc.description})">Bewaren
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 </body>

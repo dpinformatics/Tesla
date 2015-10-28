@@ -6,14 +6,23 @@
 	// array_key_lower_case(
 	switch(strtolower($_REQUEST['action'])) {
 
-		case "gettrips":
+        case "login":
+            //-----------------
+            // get other parameters
+            $car = $_REQUEST['car'];
+            $password = $_REQUEST['password'];
+
+            $d = Login($car, $password);
+            echo json_encode($d);
+            break;
+
+        case "gettrips":
             //-----------------
             $d = GetTrips();
             echo json_encode($d);
             break;
 
-
-		case "gettrip":
+        case "gettrip":
             //-------------------------------------
             // get other parameters
             $tripId = strtolower($_REQUEST['tripid']);
@@ -22,7 +31,6 @@
             $d = GetTripDetail($tripId);
             echo json_encode($d);
             break;
-
 
         case "savearrival":
             //-------------------------------------
@@ -33,7 +41,7 @@
             $arrivaldistance = strtolower($_REQUEST['arrivaldistance']);
             $arrivalconsumption = strtolower($_REQUEST['arrivalconsumption']);
 
-            // do the update
+            // do the update of the waypoint
             $wp = new waypoint();
             $wp->retrieve($wpId);
             $wp->att("arrivaldistance", $arrivaldistance);
@@ -42,6 +50,14 @@
             $wp->att("arrivaltime", time());
             $wp->att('statusid', WaypointStatus::STATUS_ARRIVED);
             $wp->save();
+
+            // change status of Trip for arrival at last waypont
+            if ($wp->att('typeid') == WaypointType::TYPE_ENDPOINT){
+                $trip = new trip();
+                $trip->retrieve($tripId);
+                $trip->att('statusid', TripStatus::STATUS_ENDED);
+                $trip->save();
+            }
 
             // retrieve the data
             echo json_encode(GetTripDetail($tripId));
@@ -94,7 +110,7 @@
             $departuredistance = strtolower($_REQUEST['departuredistance']);
             $departureconsumption = strtolower($_REQUEST['departureconsumption']);
 
-            // do the update
+            // do the update of the waypoint
             $wp = new waypoint();
             $wp->retrieve($wpId);
             $wp->att('departuredistance', $departuredistance);
@@ -103,6 +119,14 @@
             $wp->att('departuretime', time());
             $wp->att('statusid', WaypointStatus::STATUS_LEFT);
             $wp->save();
+
+            // change status of Trip for start at first waypont
+            if ($wp->att('typeid') == WaypointType::TYPE_STARTPOINT){
+                $trip = new trip();
+                $trip->retrieve($tripId);
+                $trip->att('statusid', TripStatus::STATUS_STARTED);
+                $trip->save();
+            }
 
             // retrieve the data
             echo json_encode(GetTripDetail($tripId));
@@ -115,13 +139,49 @@
 	}
 
 
+    function LogIn($car, $password)
+    {
+        //-----------------------------------------
+
+        $error = '';
+        $login = '';
+        if ($car != '38855'){
+            $error = 'Onbekend VIN, auto niet gekend';
+        }
+        else{
+            if ($password == ''){
+                $login = 'readonly';
+            }
+            else{
+                if ($password == 'diego'){
+                    $login = 'ok';
+                }
+                else{
+                    $error = 'Foutief paswoord';
+                }
+            }
+        }
+
+        if ($error != ''){
+            $login = 'nok';
+        }
+        // make the result array
+        $d = array('car' => $car
+            , 'login' => $login
+            , 'error' => $error
+            );
+
+        return array("key" => "logindata", "data" => $d);
+    }
+
+
     function GetTrips()
     {
     //-----------------------------------------
 
         // trips
         $trip = new trip();
-        $trips = $trip->getAllObjectsArray(null, array('objid', 'date', 'statusid', 'name', 'theoreticalstarttime'));
+        $trips = $trip->getAllObjectsArray("isActive = 1", array('objid', 'date', 'statusid', 'name', 'theoreticalstarttime'), 'date DESC, objid DESC');
 
         // tripstatus
         $tripstatus = new TripStatus();
@@ -144,9 +204,6 @@
         }
 
         return array("key" => "trips", "data" => $d);
-
-        return $d;
-
     }
 
     function GetTripDetail($tripId)
@@ -196,7 +253,8 @@
                 if ($i == 0){
                     // first waypoint initialize counters
                     if ($wp['statusid'] < 4){
-                        if ($tripId < 8){
+                        $startdrivetime = mktime(0, 0, 0, 1, 1 , 2000);//$trip->att('theoreticalstarttime');
+                        if ($tripId < 8 || $tripId == 11){
                             $startdrivetime = mktime(2, 0, 0, 1, 1 , 2000);//$trip->att('theoreticalstarttime');
                         }
                         if ($tripId == 8 || $tripId == 9){
@@ -204,9 +262,6 @@
                         }
                         if ($tripId == 10){
                             $startdrivetime = mktime(10, 0, 0, 1, 1 , 2000);//$trip->att('theoreticalstarttime');
-                        }
-                        if ($tripId > 10){
-                            $startdrivetime = mktime(0, 0, 0, 1, 1 , 2000);//$trip->att('theoreticalstarttime');
                         }
 
                         $wpchargeneeded = $wp['theoreticalchargeneeded'];

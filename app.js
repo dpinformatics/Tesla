@@ -10,6 +10,7 @@
             var d = {
                 trips: [],
                 trip: [],
+                logindata: {login:'nok'},
                 loading: false
             };
 
@@ -25,7 +26,9 @@
                         url: '/server.php',
                         params: arguments
                     }).success(function (data) {
+                        console.debug(data.key);
                         angular.copy(data.data, d[data.key]);
+                        console.debug(d[data.key]);
                         d.loading = false;
                     }).error(function (data) {
                         alert('error in call server ' + arguments.action);
@@ -46,9 +49,10 @@
             this.trip = TeslaService.trip;
             this.methods = TeslaService.controllermethods;
             this.loading = TeslaService.loading;
+            this.logindata = TeslaService.logindata;
 
             // initialize controller data
-            this.view = 'list';
+            this.view = '';
             this.activetrip = 0;
             this.activewaypoint = 0;
             this.status = [
@@ -70,6 +74,11 @@
                 }
             ];
 
+            this.description = '';
+            this.date = '';
+
+            this.password = '';
+
             // add controller methods
             this.changeview = function (v, id) {
                 console.debug('changing view to ' + v + ' for id ' + id);
@@ -90,9 +99,14 @@
                 }
             };
 
+            this.login = function (c, p) {
+                console.debug('login for car ' + c + ' and password ' + p);
+                TeslaService.controllermethods.servercall({action: 'login', car: c, password: p});
+            };
+
+
 
             // initialize view
-            //call gettrips to initialise the data...
             this.changeview('list', 0);
 
         }]);

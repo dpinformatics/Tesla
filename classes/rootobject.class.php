@@ -38,7 +38,7 @@
 
         }
         
-        public function getAllObjectsArray($filter, $columns = null) {
+        public function getAllObjectsArray($filter, $columns = null, $sort = null) {
             // if no columns are passed in, we're returning them ALL
             if(!$columns) $columns = array_keys($this->attributes);
             //var_dump($columns);
@@ -76,7 +76,14 @@
             if(strlen(trim($filter)) > 0) {
                 $sql .= " WHERE " . $filter;
             }
-            
+            else{
+                $sql .= " WHERE isActive = 1 ";
+            }
+
+            if (strlen(trim($sort)) > 0){
+                $sql .= " ORDER BY " .$sort;
+            }
+
             $rs = DB::Execute($sql);
             
             $return = array();

@@ -9,7 +9,258 @@
 // let's bootstrap our application.
 include_once('includes/bootstrap.inc.php');
 
+// routes :
+//          1   Thuis - La Treve - via autoroute du soleil
+//          2   La Treve - Nuits-Saint-Georges via Nimes
+//          3   La Treve - Nuits-Saint-Georges via Orange
+//
+$route = 1;
 
+echo 'Create New Trip<br>===============<br><br>';
+// trip
+$t1 = new trip();
+//$t1->att('statusid',1);
+if ($route == 1){
+    $t1->att('name', 'Thuis - La Treve - via autoroute du soleil');
+    $t1->att('date', mktime(2 ,0, 0, 10, 31, 2015));
+    $t1->att('theoreticalstarttime', mktime(2, 0, 0));
+}
+if ($route == 2){
+    $t1->att('name', 'La Treve - Ibis Nuits Saint Georges - via Nimes');
+    $t1->att('date', mktime(13 ,0, 0, 11, 7, 2015));
+    $t1->att('theoreticalstarttime', mktime(13, 0, 0));
+}
+if ($route == 3){
+    $t1->att('name', 'La Treve - Ibis Nuits Saint Georges - via Orange');
+    $t1->att('date', mktime(13 ,0, 0, 11, 7, 2015));
+    $t1->att('theoreticalstarttime', mktime(13, 0, 0));
+}
+$t1->save();
+echo 'Trip '.$t1->att('name').' (id : '.$t1->att('objid').') saved<br>';
+$tripid = $t1->att('objid');
+
+echo 'Create New Waypoints<br>====================<br><br>';
+// waypoints
+if ($route == 1) {
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'Brecht');
+    $wp->att('typeid', 1);
+    $wp->att('statusid', 3);
+    $wp->att('theoreticaldistance', null);
+    $wp->att('theoreticaltypical', null);
+    $wp->att('theoreticalconsumption', null);
+    $wp->att('theoreticaldrivetime', null);
+    $wp->att('theoreticalchargetime', null);
+    $wp->att('theoreticalchargeneeded', 380);
+    $wp->save();
+    echo 'Waypoint ' . $wp->att('destination') . ' (id : ' . $wp->att('objid') . ') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'SuC Metz');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 322.5);
+    $wp->att('theoreticaltypical', 373);
+    $wp->att('theoreticalconsumption', 70.0);
+    $wp->att('theoreticaldrivetime', 195);
+    $wp->att('theoreticalchargetime', 10);
+    $wp->att('theoreticalchargeneeded', 100);
+    $wp->save();
+    echo 'Waypoint ' . $wp->att('destination') . ' (id : ' . $wp->att('objid') . ') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'SuC Nancy');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 79.5);
+    $wp->att('theoreticaltypical', 86);
+    $wp->att('theoreticalconsumption', 16.0);
+    $wp->att('theoreticaldrivetime', 60);
+    $wp->att('theoreticalchargetime', 50);
+    $wp->att('theoreticalchargeneeded', 310);
+    $wp->save();
+    echo 'Waypoint ' . $wp->att('destination') . ' (id : ' . $wp->att('objid') . ') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'Suc Nuits-Saint-Georges');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 229.6);
+    $wp->att('theoreticaltypical', 287);
+    $wp->att('theoreticalconsumption', 53.0);
+    $wp->att('theoreticaldrivetime', 130);
+    $wp->att('theoreticalchargetime', 30);
+    $wp->att('theoreticalchargeneeded', 240);
+    $wp->save();
+    echo 'Waypoint ' . $wp->att('destination') . ' (id : ' . $wp->att('objid') . ') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'Suc Vienne');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 188.5);
+    $wp->att('theoreticaltypical', 225);
+    $wp->att('theoreticalconsumption', 42.0);
+    $wp->att('theoreticaldrivetime', 115);
+    $wp->att('theoreticalchargetime', 50);
+    $wp->att('theoreticalchargeneeded', 310);
+    $wp->save();
+    echo 'Waypoint ' . $wp->att('destination') . ' (id : ' . $wp->att('objid') . ') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'Suc Nimes');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 234.1);
+    $wp->att('theoreticaltypical', 289);
+    $wp->att('theoreticalconsumption', 54.0);
+    $wp->att('theoreticaldrivetime', 130);
+    $wp->att('theoreticalchargetime', 20);
+    $wp->att('theoreticalchargeneeded', 160);
+    $wp->save();
+    echo 'Waypoint ' . $wp->att('destination') . ' (id : ' . $wp->att('objid') . ') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'La Trêve, Véreilles');
+    $wp->att('typeid', 2);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 124.0);
+    $wp->att('theoreticaltypical', 143);
+    $wp->att('theoreticalconsumption', 27.0);
+    $wp->att('theoreticaldrivetime', 110);
+    $wp->att('theoreticalchargetime', null);
+    $wp->att('theoreticalchargeneeded', null);
+    $wp->save();
+    echo 'Waypoint ' . $wp->att('destination') . ' (id : ' . $wp->att('objid') . ') saved<br>';
+}
+
+if ($route == 2){
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'La Trêve');
+    $wp->att('typeid', 1);
+    $wp->att('statusid', 3);
+    $wp->att('theoreticaldistance', null);
+    $wp->att('theoreticaltypical', null);
+    $wp->att('theoreticalconsumption', null);
+    $wp->att('theoreticaldrivetime', null);
+    $wp->att('theoreticalchargetime', null);
+    $wp->att('theoreticalchargeneeded', 150);
+    $wp->save();
+    echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'SuC Nimes');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 124.8);
+    $wp->att('theoreticaltypical', 135);
+    $wp->att('theoreticalconsumption', 25.0);
+    $wp->att('theoreticaldrivetime', 105);
+    $wp->att('theoreticalchargetime', 50);
+    $wp->att('theoreticalchargeneeded', 330);
+    $wp->save();
+    echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'SuC Vienne');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 234.1);
+    $wp->att('theoreticaltypical', 307);
+    $wp->att('theoreticalconsumption', 57.0);
+    $wp->att('theoreticaldrivetime', 135);
+    $wp->att('theoreticalchargetime', 30);
+    $wp->att('theoreticalchargeneeded', 250);
+    $wp->save();
+    echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'Suc Nuits-Saint-Georges (Ibis)');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 189.9);
+    $wp->att('theoreticaltypical', 237);
+    $wp->att('theoreticalconsumption', 44.0);
+    $wp->att('theoreticaldrivetime', 110);
+    $wp->att('theoreticalchargetime', 0);
+    $wp->att('theoreticalchargeneeded', 380);
+    $wp->save();
+    echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
+}
+
+if ($route == 3){
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'La Trêve');
+    $wp->att('typeid', 1);
+    $wp->att('statusid', 3);
+    $wp->att('theoreticaldistance', null);
+    $wp->att('theoreticaltypical', null);
+    $wp->att('theoreticalconsumption', null);
+    $wp->att('theoreticaldrivetime', null);
+    $wp->att('theoreticalchargetime', null);
+    $wp->att('theoreticalchargeneeded', 230);
+    $wp->save();
+    echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'SuC Orange');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 183.9);
+    $wp->att('theoreticaltypical', 213);
+    $wp->att('theoreticalconsumption', 40.0);
+    $wp->att('theoreticaldrivetime', 135);
+    $wp->att('theoreticalchargetime', 35);
+    $wp->att('theoreticalchargeneeded', 260);
+    $wp->save();
+    echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'SuC Vienne');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 183.2);
+    $wp->att('theoreticaltypical', 239);
+    $wp->att('theoreticalconsumption', 45.0);
+    $wp->att('theoreticaldrivetime', 110);
+    $wp->att('theoreticalchargetime', 30);
+    $wp->att('theoreticalchargeneeded', 250);
+    $wp->save();
+    echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
+
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', 'Suc Nuits-Saint-Georges (Ibis)');
+    $wp->att('typeid', 3);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldistance', 189.9);
+    $wp->att('theoreticaltypical', 237);
+    $wp->att('theoreticalconsumption', 44.0);
+    $wp->att('theoreticaldrivetime', 110);
+    $wp->att('theoreticalchargetime', 0);
+    $wp->att('theoreticalchargeneeded', 380);
+    $wp->save();
+    echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
+}
+
+echo '<br>done<br>';
+exit();
+
+/*
 // waypoints
 $tripid = 10;
 $wp = new waypoint();
@@ -67,185 +318,7 @@ $wp->att('theoreticalchargetime', 0);
 $wp->att('theoreticalchargeneeded', 0);
 $wp->save();
 echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-
-
-
-echo '<br>done<br>';
-exit();
-
-
-// waypoints
-$tripid = 8;
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'La Trêve');
-$wp->att('typeid', 1);
-$wp->att('statusid', 3);
-$wp->att('theoreticaldistance', null);
-$wp->att('theoreticaltypical', null);
-$wp->att('theoreticalconsumption', null);
-$wp->att('theoreticaldrivetime', null);
-$wp->att('theoreticalchargetime', null);
-$wp->att('theoreticalchargeneeded', 150);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'SuC Nimes');
-$wp->att('typeid', 3);
-$wp->att('statusid', 0);
-$wp->att('theoreticaldistance', 124.8);
-$wp->att('theoreticaltypical', 135);
-$wp->att('theoreticalconsumption', 25.0);
-$wp->att('theoreticaldrivetime', 105);
-$wp->att('theoreticalchargetime', 50);
-$wp->att('theoreticalchargeneeded', 330);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'SuC Vienne');
-$wp->att('typeid', 3);
-$wp->att('statusid', 0);
-$wp->att('theoreticaldistance', 234.1);
-$wp->att('theoreticaltypical', 307);
-$wp->att('theoreticalconsumption', 57.0);
-$wp->att('theoreticaldrivetime', 135);
-$wp->att('theoreticalchargetime', 30);
-$wp->att('theoreticalchargeneeded', 250);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'Suc Nuits-Saint-Georges (Ibis)');
-$wp->att('typeid', 3);
-$wp->att('statusid', 0);
-$wp->att('theoreticaldistance', 189.9);
-$wp->att('theoreticaltypical', 237);
-$wp->att('theoreticalconsumption', 44.0);
-$wp->att('theoreticaldrivetime', 110);
-$wp->att('theoreticalchargetime', 0);
-$wp->att('theoreticalchargeneeded', 380);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-
-
-
-// trip
-$t1 = new trip();
-//$t1->att('statusid',1);
-$t1->att('name', 'Thuis - La Treve - via autoroute du soleil');
-$t1->att('date', mktime(0 ,0, 0, 7, 9, 2015));
-$t1->att('theoreticalstarttime', mktime(2, 0, 0));
-
-$t1->save();
-echo 'Trip '.$t1->att('name').' (id : '.$t1->att('objid').') saved<br>';
-
-
-// waypoints
-$tripid = 7;
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'Brecht');
-$wp->att('typeid', 1);
-$wp->att('statusid', 3);
-$wp->att('theoreticaldistance', null);
-$wp->att('theoreticaltypical', null);
-$wp->att('theoreticalconsumption', null);
-$wp->att('theoreticaldrivetime', null);
-$wp->att('theoreticalchargetime', null);
-$wp->att('theoreticalchargeneeded', 380);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'SuC Metz');
-$wp->att('typeid', 3);
-$wp->att('statusid', 0);
-$wp->att('theoreticaldistance', 322.5);
-$wp->att('theoreticaltypical', 373);
-$wp->att('theoreticalconsumption', 70.0);
-$wp->att('theoreticaldrivetime', 195);
-$wp->att('theoreticalchargetime', 10);
-$wp->att('theoreticalchargeneeded', 100);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'SuC Nancy');
-$wp->att('typeid', 3);
-$wp->att('statusid', 0);
-$wp->att('theoreticaldistance', 79.5);
-$wp->att('theoreticaltypical', 86);
-$wp->att('theoreticalconsumption', 16.0);
-$wp->att('theoreticaldrivetime', 60);
-$wp->att('theoreticalchargetime', 50);
-$wp->att('theoreticalchargeneeded', 310);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'Suc Nuits-Saint-Georges');
-$wp->att('typeid', 3);
-$wp->att('statusid', 0);
-$wp->att('theoreticaldistance', 229.6);
-$wp->att('theoreticaltypical', 287);
-$wp->att('theoreticalconsumption', 53.0);
-$wp->att('theoreticaldrivetime', 190);
-$wp->att('theoreticalchargetime', 30);
-$wp->att('theoreticalchargeneeded', 240);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'Suc Vienne');
-$wp->att('typeid', 3);
-$wp->att('statusid', 0);
-$wp->att('theoreticaldistance', 188.5);
-$wp->att('theoreticaltypical', 225);
-$wp->att('theoreticalconsumption', 42.0);
-$wp->att('theoreticaldrivetime', 115);
-$wp->att('theoreticalchargetime', 50);
-$wp->att('theoreticalchargeneeded', 310);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'Suc Nimes');
-$wp->att('typeid', 3);
-$wp->att('statusid', 0);
-$wp->att('theoreticaldistance', 234.1);
-$wp->att('theoreticaltypical', 289);
-$wp->att('theoreticalconsumption', 54.0);
-$wp->att('theoreticaldrivetime', 190);
-$wp->att('theoreticalchargetime', 20);
-$wp->att('theoreticalchargeneeded', 160);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
-
-$wp = new waypoint();
-$wp->att('tripid', $tripid);
-$wp->att('destination', 'La Trêve, Véreilles');
-$wp->att('typeid', 2);
-$wp->att('statusid', 0);
-$wp->att('theoreticaldistance', 295.5);
-$wp->att('theoreticaltypical', 362);
-$wp->att('theoreticalconsumption', 67.0);
-$wp->att('theoreticaldrivetime', 190);
-$wp->att('theoreticalchargetime', null);
-$wp->att('theoreticalchargeneeded', null);
-$wp->save();
-echo 'Waypoint '.$wp->att('destination').' (id : '.$wp->att('objid').') saved<br>';
+*/
 
 
 
