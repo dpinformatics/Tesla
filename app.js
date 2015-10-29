@@ -4,15 +4,25 @@
     angular.module('tesla', [])
 
         // create the factory - service
-        .factory('TeslaService', ['$http', function ($http) {
+        .factory('TeslaService', ['$http', '$interval', function ($http, $interval) {
 
             // declare data
             var d = {
                 trips: [],
                 trip: [],
                 logindata: {login:'nok'},
-                loading: false
+                loading: false,
+                loadedcar: 0 // car id for which trips are loaded
             };
+            
+            // function to update trips data for the car we are logged in for.
+            d.updatecar = function () {
+               if(d.logindata.login != "nok" && d.logindata.car <> d.loadedcar) {
+                    d.controllermethods.servercall({action: "gettrips"});  
+                    d.loadedcar = d.logindata.car;
+               }
+            }();
+            $interval(d.updatecar, 1000);
 
             // add service methods
             d.controllermethods = {
