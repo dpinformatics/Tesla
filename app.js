@@ -12,18 +12,9 @@
                 trip: [],
                 logindata: {login:'nok'},
                 loading: false,
-                loadedcar: 0 // car id for which trips are loaded
+                loadedcar: '' // car id for which trips are loaded
             };
             
-            // function to update trips data for the car we are logged in for.
-            d.updatecar = function () {
-               if(d.logindata.login != "nok" && d.logindata.car <> d.loadedcar) {
-                    d.controllermethods.servercall({action: "gettrips"});  
-                    d.loadedcar = d.logindata.car;
-               }
-            }();
-            $interval(d.updatecar, 1000);
-
             // add service methods
             d.controllermethods = {
                 servercall: function (arguments) {
@@ -55,6 +46,7 @@
         .controller('TeslaController', ['$scope', 'TeslaService', '$interval', function ($scope, TeslaService, $interval) {
 
             // link sercice to controller
+            this.loading = TeslaService.loading;
             this.trips = TeslaService.trips;
             this.trip = TeslaService.trip;
             this.methods = TeslaService.controllermethods;
@@ -112,9 +104,7 @@
             this.login = function (c, p) {
                 console.debug('login for car ' + c + ' and password ' + p);
                 TeslaService.controllermethods.servercall({action: 'login', car: c, password: p});
-                if (this.logindata. login != 'nok'){
-                    this.changeview('list', 0);
-                }
+                this.changeview('list', 0);
             };
 
 

@@ -53,7 +53,7 @@
     <div class="row">
         <div class="col-md-12">
             <h1 class="bg-info">
-                <a ng-click="tc.methods.servercall({action: 'gettrips'})" class="btn btn-lg btn-primary"><i  class="fa fa-refresh"></i> Verfrissen </a>
+                <a ng-click="tc.methods.servercall({action: 'gettrips', car: tc.logindata.car})" class="btn btn-lg btn-primary"><i  class="fa fa-refresh"></i> Verfrissen </a>
                 <!--a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myNewTrip" ng-show="tc.logindata.login == 'ok'"><i class="fa fa-file-o"></i> Log nieuwe trip</a-->
                 <a ng-hide="tc.logindata.login=='readonly'" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myNewTripPlan" ><i class="fa fa-file-o"></i> Plan nieuwe trip</a>
                 <a ng-hide="tc.logindata.login=='readonly'" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myNewTripLog" ><i class="fa fa-file-o"></i> Log nieuwe trip</a>
@@ -228,7 +228,7 @@
                         <label for="chargestart-typical" class="control-label">Typical range :</label>
                         <div class="input-group">
                             <input type="number" class="form-control input-lg" id="chargestart-typical" ng-model="tc.trip.waypoints[tc.trip.etape].theoretical.chargestart.typical">
-                            <span class="input-group-addon">km</span>
+                            <span class="input-group-addon">km </span>
                         </div>
                     </div>
                 </form>

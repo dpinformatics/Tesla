@@ -8,7 +8,7 @@
     Class RootObject
     {
         // lists of predefined column names that are to be treated as metadata
-        protected $metaattributes = array("seqid", "objid", "created", "createdBy", "modified", "modifiedBy", "isActive", "IPv4");
+        protected $metaattributes = array('seqid', 'objid', 'created', 'createdBy', 'modified', 'modifiedBy', 'isActive', 'IPv4');
         // list of all attributes (retrieved from the database
         protected $attributes;
         // values of the object
@@ -24,8 +24,8 @@
             $this->attributes = array_change_key_case(DB::MetaColumns($this->tableName()), CASE_LOWER);
             foreach (array_keys($this->attributes) as $att) {
                 $this->attributevalues[$att] = array(
-                    "value"          => NULL,
-                    "persistedvalue" => NULL
+                    'value'          => NULL,
+                    'persistedvalue' => NULL
                 );
             }
 
@@ -49,39 +49,37 @@
                 if (in_array($att, array_keys($this->attributes))) {
 
                     switch ($this->attributes[$att]->type) {
-                        case "datetime":
-                        case "date":
-                        case "time":
+                        case 'datetime':
+                        case 'date':
+                        case 'time':
                             // timestamps are in unixtimestamp in php
-                            $sql .= ", UNIX_TIMESTAMP(" . $this->attributes[$att]->name . ") as " . $this->attributes[$att]->name;
+                            $sql .= ', UNIX_TIMESTAMP(' . $this->attributes[$att]->name .') as ' . $this->attributes[$att]->name;
                             break;
 
-                        case "decimal":
-                        case "varchar":
-                        case "bigint":
-                        case "int":
-                        case "tinyint":
-                        case "text":
-                            $sql .= ", " . $this->attributes[$att]->name;
+                        case 'decimal':
+                        case 'varchar':
+                        case 'bigint':
+                        case 'int':
+                        case 'tinyint':
+                        case 'text':
+                            $sql .= ', ' . $this->attributes[$att]->name;
                             break;
 
                         default:
-                            throw new Exception("Datatype " . $this->attributes[$att]->type . " not supported for " . get_class($this) . "." . $this->attributes[$att]->name);
+                            throw new Exception('Datatype ' . $this->attributes[$att]->type . ' not supported for ' . get_class($this) . '.' . $this->attributes[$att]->name);
                     }
                 }
             }
             
-            $sql .= " FROM " . $this->tableName();
-                    
+            $sql .= ' FROM ' . $this->tableName();
+
+            $sql .= ' WHERE isActive = 1 ';
             if(strlen(trim($filter)) > 0) {
-                $sql .= " WHERE " . $filter;
-            }
-            else{
-                $sql .= " WHERE isActive = 1 ";
+                $sql .= ' AND (' . $filter . ')';
             }
 
             if (strlen(trim($sort)) > 0){
-                $sql .= " ORDER BY " .$sort;
+                $sql .= ' ORDER BY ' .$sort;
             }
 
             $rs = DB::Execute($sql);
@@ -202,14 +200,14 @@
             // Begin database transaction
             DB::BeginTransaction();
             $success = true;
-            if($this->att("objid")) {
+            if($this->att('objid')) {
                 // we are in UPDATE modus
                 if (!$this->_deactivate()) {
                     $success = false;
                 }
             }
             // insert new version of the object...
-            $sql = "INSERT INTO " . $this->tableName() . "(objID, isActive, created, createdby, modified, modifiedby, IPv4";
+            $sql = 'INSERT INTO ' . $this->tableName() . "(objid, isActive, created, createdby, modified, modifiedby, IPv4";
             foreach($this->attributes as $att) {
                 if(!in_array($att->name, $this->metaattributes)) {
 

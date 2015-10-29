@@ -18,7 +18,10 @@
 
         case "gettrips":
             //-----------------
-            $d = GetTrips();
+            // get other parameters
+            $car = strtolower($_REQUEST['car']);
+
+            $d = GetTrips($car);
             echo json_encode($d);
             break;
 
@@ -145,7 +148,7 @@
 
         $error = '';
         $login = '';
-        if ($car != '38855'){
+        if ($car != '38855' && $car != '93777' && $car != 'TEST'){
             $error = 'Onbekend VIN, auto niet gekend';
         }
         else{
@@ -153,7 +156,7 @@
                 $login = 'readonly';
             }
             else{
-                if ($password == 'diego'){
+                if (($car == '38855' && $password == 'diego') || ($car == '93777' && $password == 'david') || ($car == 'TEST' && $password == 'test') ){
                     $login = 'ok';
                 }
                 else{
@@ -175,13 +178,14 @@
     }
 
 
-    function GetTrips()
+    function GetTrips($car)
     {
     //-----------------------------------------
 
         // trips
         $trip = new trip();
-        $trips = $trip->getAllObjectsArray("isActive = 1", array('objid', 'date', 'statusid', 'name', 'theoreticalstarttime'), 'date DESC, objid DESC');
+        $car = DB::qstr($car);
+        $trips = $trip->getAllObjectsArray("car = $car", array('objid', 'date', 'statusid', 'name', 'theoreticalstarttime'), 'date DESC, objid DESC');
 
         // tripstatus
         $tripstatus = new TripStatus();
@@ -215,7 +219,7 @@
         $trip->retrieve($tripId);
 
         $waypoint = new waypoint();
-        $waypoints = $waypoint->getAllObjectsArray('tripid = '. DB::qstr($tripId));
+        $waypoints = $waypoint->getAllObjectsArray('tripid = '. DB::qstr($tripId), null, 'objid');
 
         // make the result array
         $wpnbr = -1;
@@ -237,6 +241,7 @@
         $wpchargestarted = 0;
         $wparrivaltime = '';
         $wpdeparturetime = '';
+        $wpchargestart = 0;
 
         // build the waypoints array
         $dwp = null;
@@ -280,12 +285,14 @@
                         $wptypical = $wp['theoreticaltypical'];
                         $wpconsumption = $wp['theoreticalconsumption'];
                         $wparrivaltime = $startdrivetime + ($wp['theoreticaldrivetime'] * 60);
+                        $wpchargestart = $wpchargestarted - $wp['theoreticaltypical'];
                     }
                     else{
                         $wpdistance = $wp['arrivaldistance'];
-                        $wptypical = ($wpchargestarted - $wp['arrivaltypical']);;
+                        $wptypical = ($wpchargestarted - $wp['arrivaltypical']);
                         $wpconsumption = $wp['arrivalconsumption'];
                         $wparrivaltime = $wp['arrivaltime'];
+                        $wpchargestart = intval($wp['arrivaltypical']);
                     }
                     $totaldistance += $wpdistance;
                     $totaltypical += $wptypical;
@@ -366,7 +373,7 @@
                             , 'time' => $wp['theoreticaldrivetime']
                             )
                         , 'chargestart' =>
-                            array('typical' => $wpchargestarted - $wp['theoreticaltypical']
+                            array('typical' => $wpchargestart
                             , 'time' => ''
                             )
                         , 'chargeend' =>
@@ -374,13 +381,13 @@
                             , 'time' => ''
                             )
                         , 'departure' =>
-                            array('distance' => 0
+                            array('distance' => 0.0
                             , 'typical' => $wpchargeneeded + 0
-                            , 'consumption' => 0
+                            , 'consumption' => 0.0
                             , 'time' => ''
                             )
                         )
-                , 'efffective' =>
+                , 'effective' =>
                         array('arrival' =>
                             array('distance' => $wp['arrivaldistance']
                             , 'typical' => $wp['arrivaltypical']
