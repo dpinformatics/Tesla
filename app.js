@@ -19,7 +19,7 @@
                 servercall: function (arguments) {
                     angular.copy(true, d.loading);
                     //d.loading = true;
-                    console.debug('in servercall');
+                    console.debug('in servercall' + arguments);
                     // server returns data of type 'key'...
                     $http({
                         method: 'GET',
@@ -87,7 +87,7 @@
 
                 switch (v) {
                     case "list": // we want to see all trips...
-                        TeslaService.controllermethods.servercall({action: "gettrips"});
+                        TeslaService.controllermethods.servercall({action: "gettrips", car: this.logindata.car});
                         break;
 
                     case "view": // we want to see 1 trip...
@@ -102,12 +102,15 @@
             this.login = function (c, p) {
                 console.debug('login for car ' + c + ' and password ' + p);
                 TeslaService.controllermethods.servercall({action: 'login', car: c, password: p});
+                if (this.logindata. login != 'nok'){
+                    this.changeview('list', 0);
+                }
             };
 
 
 
             // initialize view
-            this.changeview('list', 0);
+            this.changeview('login', 0);
 
         }]);
 
