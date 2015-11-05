@@ -83,7 +83,10 @@
 
 <!-- Detail for a trip -->
 <div ng-show="tc.view == 'view'">
-    <h1 class="ng-binding bg-info"><a ng-click="tc.changeview('list', 0)" class="btn btn-lg btn-primary"><i class="fa fa-undo"></i>Terug naar overzicht</a> {{o.trip.desc}}</h1>
+    <h1 class="ng-binding bg-info">
+        <a ng-click="tc.changeview('list', 0)" class="btn btn-lg btn-primary"><i class="fa fa-undo"></i>Terug naar overzicht</a> {{o.trip.desc}}
+        <a ng-click="tc.changeview('view', tc.activetrip)" class="btn btn-lg btn-primary"><i class="fa fa-undo"></i>Verfrissen</a> {{o.trip.desc}}
+    </h1>
 
     <!--
     <div class="row">
