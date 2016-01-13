@@ -1,10 +1,36 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <!--link rel="stylesheet" href="slate.css"-->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <title>Tesla Logger</title>
+    <style>
+
+        td,
+        th {
+            font-size: x-large;
+        }
+
+    </style>
+    <title>Tesla Trip Planner and  Logger</title>
+    <script type="text/javascript">
+        function changeCSS() {
+
+            var oldlink = document.getElementsByTagName("link").item(0);
+
+            var newlink = document.createElement("link")
+            newlink.setAttribute("rel", "stylesheet");
+            newlink.setAttribute("type", "text/css");
+            if (oldlink.getAttribute("href") == "slate.css"){
+                newlink.setAttribute("href", "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css");
+            }else{
+                newlink.setAttribute("href", "slate.css");
+            }
+
+            document.getElementsByTagName("head").item(0).replaceChild(newlink, oldlink);
+        }
+    </script>
 </head>
-<body ng-app="tesla" ng-controller="TeslaController as tc" class="well">
+<body ng-app="tesla" ng-controller="TeslaController as tc" class="well ">
 <!--div class="row">
     <div class="block">
         <h1>Tesla Log App</h1>
@@ -15,7 +41,7 @@
 <div ng-show="tc.logindata.login == 'nok'">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="bg-info text-center">Welkom op trip logging en planning</h1>
+            <h1 class=" text-center">Welkom op trip logging en planning</h1>
         </div>
     </div>
     <div class="row">
@@ -36,7 +62,7 @@
                 </div>
             </form>
             <div>
-                <button type="button" class="btn btn-lg btn-primary" ng-click="tc.login(tc.logindata.car, tc.password)"><i class="fa fa-sign-in"></i> Aanmelden</button>
+                <button type="button" class="btn btn-lg btn-default" ng-click="tc.login(tc.logindata.car, tc.password)"><i class="fa fa-sign-in"></i> Aanmelden</button>
             </div>
             <h3>
                 <label class="text-danger">{{tc.logindata.error}}</label>
@@ -52,13 +78,14 @@
 <div ng-show="tc.view == 'list'">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="bg-info">
-                <a ng-click="tc.methods.servercall({action: 'gettrips', car: tc.logindata.car})" class="btn btn-lg btn-primary"><i  class="fa fa-refresh"></i> Verfrissen </a>
+            <h1 >
+                <a ng-click="tc.methods.servercall({action: 'gettrips', car: tc.logindata.car})" class="btn btn-lg btn-default"><i  class="fa fa-refresh"></i> Verfrissen </a>
                 <!--a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myNewTrip" ng-show="tc.logindata.login == 'ok'"><i class="fa fa-file-o"></i> Log nieuwe trip</a-->
-                <a ng-hide="tc.logindata.login=='readonly'" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myNewTripPlan" ><i class="fa fa-file-o"></i> Plan nieuwe trip</a>
-                <a ng-hide="tc.logindata.login=='readonly'" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myNewTripLog" ><i class="fa fa-file-o"></i> Log nieuwe trip</a>
+                <a ng-hide="tc.logindata.login=='readonly'" class="btn btn-default btn-lg" data-toggle="modal" data-target="#myNewTripPlan" ><i class="fa fa-file-o"></i> Plan nieuwe trip</a>
+                <a ng-hide="tc.logindata.login=='readonly'" class="btn btn-default btn-lg" data-toggle="modal" data-target="#myNewTripLog" ><i class="fa fa-file-o"></i> Log nieuwe trip</a>
+                <a href="#" onclick="changeCSS()"class="btn btn-lg btn-default"><i class="fa fa-undo"></i> Dag - Nacht</a>
             </h1>
-            <h1 class="bg-info">Overzicht trips voor VIN {{tc.logindata.car}}</h1>
+            <h1 >Overzicht trips voor VIN {{tc.logindata.car}}</h1>
         </div>
     </div>
     <div class="row">
@@ -71,7 +98,7 @@
                     <th>Status</th>
                 </tr>
                 <tr ng-repeat="tr in tc.trips">
-                    <td><a ng-click="tc.changeview('view', tr.id)" class="btn btn-lg btn-info"><i class="fa fa-search"></i> Details</a></td>
+                    <td><a ng-click="tc.changeview('view', tr.id)" class="btn btn-lg btn-primary"><i class="fa fa-search"></i> Details</a></td>
                     <td>{{tr.date * 1000|date : 'dd-MM-yyyy'}}</td>
                     <td>{{tr.name}}</td>
                     <td>{{tr.status}}</td>
@@ -83,9 +110,9 @@
 
 <!-- Detail for a trip -->
 <div ng-show="tc.view == 'view'">
-    <h1 class="ng-binding bg-info">
-        <a ng-click="tc.changeview('list', 0)" class="btn btn-lg btn-primary"><i class="fa fa-undo"></i>Terug naar overzicht</a> {{o.trip.desc}}
-        <a ng-click="tc.changeview('view', tc.activetrip)" class="btn btn-lg btn-primary"><i class="fa fa-undo"></i>Verfrissen</a> {{o.trip.desc}}
+    <h1 class="ng-binding ">
+        <a ng-click="tc.changeview('list', 0)" class="btn btn-lg btn-default"><i class="fa fa-undo"></i> Terug naar overzicht</a>
+        <a ng-click="tc.changeview('view', tc.activetrip)" class="btn btn-lg btn-default"><i class="fa fa-undo"></i> Verfrissen</a>
     </h1>
 
     <!--
@@ -135,7 +162,7 @@
                     <th class="text-center">Vertrek<br>u</th>
                 </tr>
                 <tr ng-repeat="wp in tc.trip.waypoints">
-                    <td><a class="open-WayPointDetail btn btn-info btn-lg" data-toggle="modal"
+                    <td><a class="open-WayPointDetail btn btn-primary btn-lg" data-toggle="modal"
                            data-target="#myWayPointDetail" ng-click="tc.activewaypoint = $index">Detail</a>
                     </td>
                     <td><i class="fa fa-car text-primary" ng-show="$index == tc.trip.etape"></i></td>

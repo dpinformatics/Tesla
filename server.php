@@ -297,7 +297,8 @@
                     }
 
                     if ($wp['statusid'] < 3){
-                        $startdrivetime = $wparrivaltime + ($wp['theoreticalchargetime'] * 60);
+                        //$startdrivetime = $wparrivaltime + ($wp['theoreticalchargetime'] * 60);
+                        $startdrivetime = $wparrivaltime + (CalculateChargeTime(0, $wp['theoreticalchargeneeded']) * 60);
                         $wpchargeneeded = $wp['theoreticalchargeneeded'];
                     }
                     if ($wp['statusid'] == 3){
@@ -312,7 +313,8 @@
                     // to calculate
                     $wpdrivetime = $wp['theoreticaldrivetime'];
                     $totaldrivetime += $wpdrivetime;
-                    $wpchargetime = $wp['theoreticalchargetime'];
+                    //$wpchargetime = $wp['theoreticalchargetime'];
+                    $wpchargetime = CalculateChargeTime(0, $wp['theoreticalchargeneeded']);
                     $totalchargetime += $wpchargetime;
 
 
@@ -415,4 +417,27 @@
 
         return array("key" => "trip", "data" => $d);
         //return $d;
+    }
+
+    function CalculateChargeTime($from, $to)
+    {
+    //--------------------------------------
+
+        $max = 385;
+        // xls function :  =ROUNDUP((LN(-(((C4)/$J$2)-1))/-LN(1,03830664))-(LN(-(((B4)/$J$2)-1))/-LN(1,03830664));0)
+        $mt = log(-(($to / $max) - 1)) / - log(1.03830664);
+        $mf = log(-(($from / $max) - 1)) / - log(1.03830664);
+        $m = ceil($mt - $mf);
+
+        return $m;
+    }
+
+    function CalculateChargeNeeded($typical)
+    {
+    //--------------------------------------
+
+        $n = floor($typical * 1.1 / 10) * 10;
+        $c = min(380, $n);
+
+        return $c;
     }
