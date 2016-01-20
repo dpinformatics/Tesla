@@ -6,9 +6,10 @@
         private $tesla_client_secret;
         private $debug = false;
         private $auth = false;
+        private $user = false;
 
         private $apiversion = 1;
-        private $baseUrl = "https://owner-api.teslamotors.com/api";
+        private $restUrl = "https://owner-api.teslamotors.com/api";
 
         public function __construct($clientId, $secret)
         {
@@ -33,6 +34,7 @@
             );
             if (isset($result["access_token"])) {
                 $this->auth = $result;
+                $this->user = $user; // keep for streaming possibilities
             }
 
         }
@@ -48,7 +50,7 @@
 
         public function get($request)
         {
-            $url = $this->baseUrl . "/" . $this->apiversion . "/" . $request;
+            $url = $this->restUrl . "/" . $this->apiversion . "/" . $request;
 
             return $this->request(
                 "get",
@@ -57,9 +59,18 @@
             );
         }
 
+        public function stream($vehicle, $token)
+        {
+            $url = "https://streaming.vn.teslamotors.com/stream/" . $vehicle; // . ' + options.vehicle_id + '/?values=' + exports.stream_columns.join(',')
+            $url .= "/?values=speed,odometer,soc,elevation,est_heading,est_lat,est_lng,power,shift_state,range,est_range,heading";
+
+            return $this->request("get", $url, false, false, false, $token);
+
+        }
+
         public function post($request, $params = false)
         {
-            $url = $this->baseUrl . "/" . $this->apiversion . "/" . $request;
+            $url = $this->restUrl . "/" . $this->apiversion . "/" . $request;
 
             return $this->request(
                 "post",
@@ -69,7 +80,7 @@
             );
         }
 
-        private function request($type = "get", $url, $returnJson = true, $params = false, $customheaders = false)
+        private function request($type = "get", $url, $returnJson = true, $params = false, $customheaders = false, $streamtoken = false)
         {
             $headers = array();
             $headers[] = "content-type: application/x-www-form-urlencoded";
@@ -80,13 +91,16 @@
                 }
             }
 
-            if (isset($this->auth["access_token"])) {
+            if (isset($this->auth["access_token"]) && !$streamtoken) {
                 $headers[] = "Authorization: Bearer " . $this->auth["access_token"];
             }
 
             $ch = curl_init();
 
             curl_setopt($ch, CURLOPT_VERBOSE, 1);
+            $verbose = fopen('php://temp', 'w+');
+            curl_setopt($ch, CURLOPT_STDERR, $verbose);
+
             curl_setopt($ch, CURLOPT_URL, $url);
             if ($type == "post") {
                 curl_setopt($ch, CURLOPT_POST, 1);
@@ -96,15 +110,21 @@
             }
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HEADER, false);
-            //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+            if ($streamtoken) {
+                curl_setopt($ch, CURLOPT_USERPWD, $this->user . ":" . $streamtoken);
+                curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            }
+
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-
             $return = curl_exec($ch);
+
 
             if ($returnJson) {
                 $return = json_decode($return, true);
             }
+
 
             return $return;
 
