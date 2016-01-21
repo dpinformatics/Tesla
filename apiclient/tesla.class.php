@@ -7,6 +7,7 @@
         private $debug = false;
         private $auth = false;
         private $user = false;
+        private $token = false;
 
         private $apiversion = 1;
         private $restUrl = "https://owner-api.teslamotors.com/api";
@@ -35,8 +36,14 @@
             if (isset($result["access_token"])) {
                 $this->auth = $result;
                 $this->user = $user; // keep for streaming possibilities
+                $this->token = $this->auth["access_token"];
             }
 
+        }
+        
+        public function setToken($token) {
+            $this->token = $token;    
+        }
         }
 
         public function debug($newvalue = true)
@@ -91,8 +98,8 @@
                 }
             }
 
-            if (isset($this->auth["access_token"]) && !$streamtoken) {
-                $headers[] = "Authorization: Bearer " . $this->auth["access_token"];
+            if (isset($this->token) && !$streamtoken) {
+                $headers[] = "Authorization: Bearer " . $this->token;
             }
 
             $ch = curl_init();
