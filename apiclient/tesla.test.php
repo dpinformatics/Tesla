@@ -1,6 +1,8 @@
 <?php
     include_once("tesla.class.php");
 
+    // initialise our API class.
+    // current client ID and secret ID can be found at http://pastebin.com/fX6ejAHd
     $tesla = new TeslaClient("e4a9949fcfa04068f59abb5a658f2bac0a3428e4652315490b659d5ab3f35a9e", "c75f14bbadc8bee3a7594412c31416f8300256d7668ea7e6e7f06727bfb9d220");
 
     echo "<pre>";
@@ -13,7 +15,12 @@
         echo "<br/>add them to the request using parameters <strong>email</strong> and <strong>password</strong>";
         exit();
     }
-    $tesla->auth($_REQUEST["email"], $_REQUEST["password"]);
+    $token = $tesla->auth($_REQUEST["email"], $_REQUEST["password"]);
+    echo "Token as a result of the authentication is " . $token;
+    
+    // alternative method to authenticate:
+    
+    
 
     // let's get vehicle information
     $reply = $tesla->get("vehicles");
