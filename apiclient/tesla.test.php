@@ -1,4 +1,10 @@
 <?php
+
+    /**
+     * API DOCUMENTATION:                   http://docs.timdorr.apiary.io/
+     * TESLA oAUTH CLIENT ID AND SECRET:    http://pastebin.com/fX6ejAHd
+     */
+     
     include_once("tesla.class.php");
 
     // initialise our API class.
@@ -10,18 +16,23 @@
     // login to the tesla api
     // for demonstration purposes, we're taking user and password from the request parameters.
 
-    if (!isset($_REQUEST["email"]) || !isset($_REQUEST["password"])) {
+    if (!isset($_REQUEST["email"]) || !(isset($_REQUEST["password"]) || isset($_REQUEST["token"]))) {
         echo "<strong>You need to supply credentials!</strong>";
-        echo "<br/>add them to the request using parameters <strong>email</strong> and <strong>password</strong>";
+        echo "<br/>add them to the request using parameters <strong>email</strong> and (<strong>password</strong> or <strong>token</strong>)";
         exit();
     }
-    $token = $tesla->auth($_REQUEST["email"], $_REQUEST["password"]);
+    if(!isset($_REQUEST["token"])) {
+        // we are authenticating using email and password
+        $token = $tesla->auth($_REQUEST["email"], $_REQUEST["password"]);
+    } else {
+        // we are authenticating using email and previously stored token
+        $token = $_REQUEST["token"];
+        $tesla->authWithToken($_REQUEST["email"], $_REQUEST["token"]);
+    }
+    
     echo "Token as a result of the authentication is " . $token;
-    
-    // alternative method to authenticate:
-    
-    
 
+    // API calls can be found at http://docs.timdorr.apiary.io/
     // let's get vehicle information
     $reply = $tesla->get("vehicles");
     $vehicles = $reply["response"];
