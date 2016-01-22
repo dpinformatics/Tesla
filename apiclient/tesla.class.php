@@ -42,7 +42,8 @@
 
         }
         
-        public function setToken($token) {
+        public function authWithToken($email, $token) {
+            $this->user = $email;
             $this->token = $token;    
         }
         }
