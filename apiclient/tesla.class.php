@@ -90,50 +90,59 @@
 
         private function request($type = "get", $url, $returnJson = true, $params = false, $customheaders = false, $streamtoken = false)
         {
+            // initialise curl
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_VERBOSE, 0);  // debug true or false
+            
+            // initialise headers
             $headers = array();
             $headers[] = "content-type: application/x-www-form-urlencoded";
-
             if (is_array($customheaders)) {
                 foreach ($customheaders as $custhead) {
                     $headers[] = $custhead;
                 }
             }
-
+            
+            // authentication
             if (isset($this->token) && !$streamtoken) {
+                // we have a token, and we are not calling the stream API
                 $headers[] = "Authorization: Bearer " . $this->token;
             }
-
-            $ch = curl_init();
-
-            curl_setopt($ch, CURLOPT_VERBOSE, 1);
-            $verbose = fopen('php://temp', 'w+');
-            curl_setopt($ch, CURLOPT_STDERR, $verbose);
-
-            curl_setopt($ch, CURLOPT_URL, $url);
-            if ($type == "post") {
-                curl_setopt($ch, CURLOPT_POST, 1);
-            }
-            if (is_array($params) && count($params)) {
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-            }
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HEADER, false);
-
             if ($streamtoken) {
+                // we are calling the stream API
                 curl_setopt($ch, CURLOPT_USERPWD, $this->user . ":" . $streamtoken);
                 curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             }
-
+            
+            // set URL to call
+            curl_setopt($ch, CURLOPT_URL, $url);
+            
+            // POST or GET?
+            if ($type == "post") {
+                curl_setopt($ch, CURLOPT_POST, 1);
+            }
+            
+            // add parameters to call
+            if (is_array($params) && count($params)) {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+            }
+            
+            // adding the headers to the call
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            
+            // generic settings... whatever
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, false);
 
+            // Execute call to the API server
             $return = curl_exec($ch);
 
-
             if ($returnJson) {
+                // decode response to JSON object
                 $return = json_decode($return, true);
             }
 
-
+            // return answer.
             return $return;
 
         }
