@@ -38,6 +38,7 @@
                 $this->user = $user; // keep for streaming possibilities
                 $this->token = $this->auth["access_token"];
             }
+            return $this->token;
 
         }
         
