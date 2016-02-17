@@ -10,6 +10,7 @@
             var d = {
                 trips: [],
                 trip: [],
+                cardata: [],
                 logindata: {login:'nok'},
                 loading: false,
                 loadedcar: '' // car id for which trips are loaded
@@ -52,6 +53,7 @@
             this.methods = TeslaService.controllermethods;
             this.loading = TeslaService.loading;
             this.logindata = TeslaService.logindata;
+            this.cardata = TeslaService.cardata;
 
             // initialize controller data
             this.view = '';
@@ -105,6 +107,11 @@
                 console.debug('login for car ' + c + ' and password ' + p);
                 TeslaService.controllermethods.servercall({action: 'login', car: c, password: p});
                 this.changeview('list', 0);
+            };
+
+            this.getcardata = function (c, t) {
+                console.debug('Get car API-data for car ' + c + 'departuretypical ' + t);
+                TeslaService.controllermethods.servercall({action: 'getcardata', car: c, typical: t});
             };
 
 

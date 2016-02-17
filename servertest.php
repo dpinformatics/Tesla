@@ -29,13 +29,18 @@ include_once('includes/bootstrap.inc.php');
 //CreateRoute(3, '2016-01-02 12:00');
 //CreateRoute(4, '2016-01-03 10:00');
 //CreateRoute(51, '2016-01-02 10:00');
-CreateRoute(52, '2016-01-02 10:00'); exit();
+//CreateRoute(52, '2016-01-02 10:00'); exit();
 //CreateRoute(6, '2016-01-03 10:00');
 
-echo 'TrpDetail for trip 10 :<br>===============<br> ';
-echo json_encode(GetTripDetail(10));
+//echo 'CarData for car 38855 :<br>===============<br> ';
+//echo json_encode(GetCarStateRaw('38855'));
+//echo json_encode(GetCarChargeRaw('38855'));
+//echo json_encode(GetCarData('38855'));
 
-echo '<br><br>';
+//echo 'TrpDetail for trip 10 :<br>===============<br> ';
+//echo json_encode(GetTripDetail(10));
+
+//echo '<br><br>';
 echo 'TrpDetail for trip 14 :<br>===============<br> ';
 echo json_encode(GetTripDetail(14));
 
@@ -62,6 +67,111 @@ for ($x = 10; $x <= 380; $x = $x + 10) {
 
 
 exit();
+
+function GetCarStateRaw($carkey)
+{
+    //-----------------------------------------
+    include_once("apiclient/tesla.class.php");
+    $tesla = new TeslaClient("e4a9949fcfa04068f59abb5a658f2bac0a3428e4652315490b659d5ab3f35a9e", "c75f14bbadc8bee3a7594412c31416f8300256d7668ea7e6e7f06727bfb9d220");
+
+    // read the car-table
+    //$car = new car();
+    //$carkey = DB::qstr($carkey);
+    //$car = $car->getAllObjectsArray("car = $car", array('objid', 'date', 'statusid', 'name', 'theoreticalstarttime'), 'date DESC, objid DESC');
+    $user = 'diego@dpinformatics.be';
+    //$password = 'dpinfo6103';
+    //$token = $tesla->auth($user, $password);
+    $token = 'b927ce46507b94f2839b2c48f2fa946f5249094743454c7fdb462d8c4cb9fef2';
+    $technicalid = '40235758685225996';
+
+    $tesla->authWithToken($user, $token);
+
+    // make the result array
+    // car state
+    $reply = $tesla->get('vehicles/' . $technicalid . '/data_request/vehicle_state');
+    $physical = $reply['response'];
+    return $physical;
+}
+
+function GetCarChargeRaw($carkey)
+{
+    //-----------------------------------------
+    include_once("apiclient/tesla.class.php");
+    $tesla = new TeslaClient("e4a9949fcfa04068f59abb5a658f2bac0a3428e4652315490b659d5ab3f35a9e", "c75f14bbadc8bee3a7594412c31416f8300256d7668ea7e6e7f06727bfb9d220");
+
+    // read the car-table
+    //$car = new car();
+    //$carkey = DB::qstr($carkey);
+    //$car = $car->getAllObjectsArray("car = $car", array('objid', 'date', 'statusid', 'name', 'theoreticalstarttime'), 'date DESC, objid DESC');
+    $user = 'diego@dpinformatics.be';
+    //$password = 'dpinfo6103';
+    //$token = $tesla->auth($user, $password);
+    $token = 'b927ce46507b94f2839b2c48f2fa946f5249094743454c7fdb462d8c4cb9fef2';
+    $technicalid = '40235758685225996';
+
+    $tesla->authWithToken($user, $token);
+
+    // make the result array
+    //charge state
+    $reply = $tesla->get("vehicles/" . $technicalid . "/data_request/charge_state");
+    $charge = $reply["response"];
+    return $charge;
+
+}
+
+function GetCarData($carkey)
+{
+    //-----------------------------------------
+    include_once("apiclient/tesla.class.php");
+    $tesla = new TeslaClient("e4a9949fcfa04068f59abb5a658f2bac0a3428e4652315490b659d5ab3f35a9e", "c75f14bbadc8bee3a7594412c31416f8300256d7668ea7e6e7f06727bfb9d220");
+
+    // read the car-table
+    //$car = new car();
+    //$carkey = DB::qstr($carkey);
+    //$car = $car->getAllObjectsArray("car = $car", array('objid', 'date', 'statusid', 'name', 'theoreticalstarttime'), 'date DESC, objid DESC');
+    $user = 'diego@dpinformatics.be';
+    //$password = 'dpinfo6103';
+    //$token = $tesla->auth($user, $password);
+    $token = 'b927ce46507b94f2839b2c48f2fa946f5249094743454c7fdb462d8c4cb9fef2';
+    $technicalid = '40235758685225996';
+
+    $tesla->authWithToken($user, $token);
+
+    // make the result array
+    // car state
+    $reply = $tesla->get('vehicles/' . $technicalid . '/data_request/vehicle_state');
+    $physical = $reply['response'];
+
+    $s['vehicle_name'] = $physical['vehicle_name'];
+    $s['odometer'] = round($physical['odometer'], 2);
+    $s['odometerkm'] = round($physical['odometer'] * 1.60934, 2);
+    $s['locked'] = $physical['locked'];
+    $s['exterior_color'] = $physical['exterior_color'];
+    $s['car_version'] = $physical['car_version'];
+    $d['state'] = $s;
+
+    //charge state
+    $reply = $tesla->get("vehicles/" . $technicalid . "/data_request/charge_state");
+    $charge = $reply["response"];
+
+    $c['charging_state'] = $charge["charging_state"];
+    $c['battery_range'] = round($charge["battery_range"], 0);
+    $c['battery_rangekm'] = round($charge["battery_range"] * 1.60934, 0);
+    $c['est_battery_range'] = round($charge["est_battery_range"], 0);
+    $c['est_battery_rangekm'] = round($charge["est_battery_range"] * 1.60934, 0);
+    $c['ideal_battery_range'] = round($charge["ideal_battery_range"], 0);
+    $c['ideal_battery_rangekm'] = round($charge["ideal_battery_range"] * 1.60934, 0);
+    $c['battery_level'] = $charge["battery_level"];
+    $c['usable_battery_level'] = $charge["usable_battery_level"];
+    $c['charge_energy_added'] = $charge["charge_energy_added"];
+    $c['charge_miles_added_rated'] = round($charge["charge_miles_added_rated"], 0);
+    $c['charge_kms_added_rated'] = round($charge["charge_miles_added_rated"] * 1.60934, 0);
+    $c['charge_miles_added_ideal'] = round($charge["charge_miles_added_ideal"], 0);
+    $c['charge_kms_added_ideal'] = round($charge["charge_miles_added_ideal"] * 1.60934, 0);
+    $d['charge']= $c;
+
+    return array("key" => "cardata", "data" => $d);
+}
 
 
 function CalculateEnergy($typical)
@@ -619,25 +729,6 @@ function GetTripDetail($tripId)
     $waypoint = new waypoint();
     $waypoints = $waypoint->getAllObjectsArray('tripid = '. DB::qstr($tripId), null, 'objid');
 
-    /*
-    $wpdistance = '';
-    $totaldistance = 0;
-    $wptypical = '';
-    $totaltypical = 0;
-    $wpconsumption = '';
-    $totalconsumption = 0;
-    $wpaverage = '';
-    $wpdrivetime = '';
-    $totaldrivetime = 0;
-    $wpchargetime = '';
-    $totalchargetime = 0;
-    $startdrivetime = $trip->att('theoreticalstarttime');
-    $wpchargeneeded = 0;
-    $wpchargestarted = 0;
-    $wparrivaltime = '';
-    $wpdeparturetime = '';
-    $wpchargestart = 0;
-    */
     // declare and initialize all variables
     $wpnbr = -1;
     $statusid = WaypointStatus::STATUS_LEFT;
@@ -665,30 +756,15 @@ function GetTripDetail($tripId)
 
         // calculate all values
         // first position : O overview (effective), T theoretical, F formatting
-        // second position : A distance, T Typical, V consumption G Average
+        // second position : A distance, T Typical, V consumption G Average, R DriveTime, L ChargeTime
         // third position : 1 waypoint-value, 2 sum
+        // second and third position : CN ChargeNeeded AT ArrivalTime, VT DepartureTime
         CalculateDistance($i, $wp, $prevwp
             , $oa1, $ta1, $oa2, $ta2
             , $ot1, $tt1, $ot2, $tt2
             , $ov1, $tv1, $ov2, $tv2
             , $og1, $tg1, $og2, $tg2
             , $fa1, $fa2, $ft1, $ft2, $fv1, $fv2, $fg1, $fg2);
-        $oa1 = format($oa1, 1);
-        $foa2 = format($oa2, 1);
-        $ta1 = format($ta1, 1);
-        $fta2 = format($ta2, 1);
-        $ot1 = format($ot1, 0);
-        $fot2 = format($ot2, 0);
-        $tt1 = format($tt1, 0);
-        $ftt2 = format($tt2, 0);
-        $ov1 = format($ov1, 1);
-        $fov2 = format($ov2, 1);
-        $tv1 = format($tv1, 1);
-        $ftv2 = format($tv2, 1);
-        $og1 = format($og1, 0);
-        $fog2 = format($og2, 0);
-        $tg1 = format($tg1, 0);
-        $ftg2 = format($tg2, 0);
 
         CalculateTimes($trip, $i, $wp, $prevwp, $nextwp
             , $or1, $tr1, $or2, $tr2
@@ -702,60 +778,57 @@ function GetTripDetail($tripId)
         , 'name' => $wp['destination']
         , 'statusid' => $wp['statusid']
         , 'overview' =>
-                array('distance' => $oa1
-                , 'totaldistance' => $foa2
-                , 'typical' => $ot1
-                , 'totaltypical' => $fot2
-                , 'consumption' => $ov1
-                , 'totalconsumption' => $fov2
-                , 'average' => $og1
-                , 'totalaverage' => $fog2
-                , 'drivetime' => $or1
-                , 'totaldrivetime' => $or2                   //date('H:i', mktime(0, $totaldrivetime, 0, 1, 1, 2000))
-                , 'chargetime' => $ol1
-                , 'totalchargetime' => $ol2
+                array('distance' => format($oa1, 1)
+                , 'totaldistance' => format($oa2, 1)
+                , 'typical' => format($ot1, 0)
+                , 'totaltypical' => format($ot2, 0)
+                , 'consumption' => format($ov1, 1)
+                , 'totalconsumption' => format($ov2, 1)
+                , 'average' => format($og1, 0)
+                , 'totalaverage' => format($og2, 0)
+                , 'drivetime' => formatMinutes($or1)
+                , 'totaldrivetime' => formatMinutes($or2)
+                , 'chargetime' => formatMinutes($ol1)
+                , 'totalchargetime' => formatMinutes($ol2)
                 , 'chargeneeded' => $ocn
-                , 'arrivaltime' => $oat
-                , 'departuretime' => $ovt
+                , 'arrivaltime' => formatDate($oat)
+                , 'departuretime' => formatDate($ovt)
                 )
         , 'theoretical' =>
-                array('distance' => $ta1
-                , 'totaldistance' => $fta2
-                , 'typical' => $tt1
-                , 'totaltypical' => $ftt2
-                , 'consumption' => $tv1
-                , 'totalconsumption' => $ftv2
-                , 'average' => $tg1
-                , 'totalaverage' => $ftg2
-                , 'drivetime' => $tr1
-                , 'totaldrivetime' => $tr2
-                , 'chargetime' => $tl1
-                , 'totalchargetime' => $tl2
+                array('distance' => format($ta1, 1)
+                , 'totaldistance' => format($ta2, 1)
+                , 'typical' => format($tt1, 0)
+                , 'totaltypical' => format($tt2, 0)
+                , 'consumption' => format($tv1, 1)
+                , 'totalconsumption' => format($tv2, 1)
+                , 'average' => format($tg1, 0)
+                , 'totalaverage' => format($tg2, 0)
+                , 'drivetime' => formatMinutes($tr1)
+                , 'totaldrivetime' => formatMinutes($tr2)
+                , 'chargetime' => formatMinutes($tl1)
+                , 'totalchargetime' => formatMinutes($tl2)
                 , 'chargeneeded' => $tcn
-                , 'arrivaltime' => $tat
-                , 'departuretime' => $tvt
+                , 'arrivaltime' => formatDate( $tat)
+                , 'departuretime' => formatDate($tvt)
                 )
-        , 'formating' =>
-                array('distance' => $fa1
-                , 'totaldistance' => $fa2
-                , 'typical' => $ft1
-                , 'totaltypical' => $ft2
-                , 'consumption' => $fv1
-                , 'totalconsumption' => $fv2
-                , 'average' => $fg1
-                , 'totalaverage' => $fg2
-                , 'drivetime' => $tr1
-                , 'totaldrivetime' => $tr2
-                , 'chargetime' => $tl1
-                , 'totalchargetime' => $tl2
-                , 'chargeneeded' => $tcn
-                , 'arrivaltime' => $tat
-                , 'departuretime' => $tvt
-                )
+        //, 'formating' =>
+        //        array('distance' => $fa1
+        //        , 'totaldistance' => $fa2
+        //        , 'typical' => $ft1
+        //        , 'totaltypical' => $ft2
+        //        , 'consumption' => $fv1
+        //        , 'totalconsumption' => $fv2
+        //        , 'average' => $fg1
+        //        , 'totalaverage' => $fg2
+        //        , 'drivetime' => $fr1
+        //        , 'totaldrivetime' => $fr2
+        //        , 'chargetime' => $fl1
+        //        , 'totalchargetime' => $fl2
+        //        , 'chargeneeded' => $fcn
+        //        , 'arrivaltime' => $fat
+        //        , 'departuretime' => $fvt
+        //        )
         );
-
-        //$wpchargestarted = $wpchargeneeded;
-
     }
 
     // final result
@@ -776,6 +849,22 @@ function format($val, $dec){
     }
     else{
         return number_format($val, $dec, ',', '.');
+    }
+}
+function formatDate($val){
+    if ($val == '') {
+        return $val;
+    }
+    else{
+        return date('H:i', $val);
+    }
+}
+function formatMinutes($val){
+    if ($val == '') {
+        return $val;
+    }
+    else{
+        return date('H:i', mktime(0, $val, 0, 1, 1, 2000));
     }
 }
 
@@ -828,8 +917,16 @@ function CalculateDistance($i, $wp, $prevwp
         $oa2 = $oa2 + $oa1;
         $ot2 = $ot2 + $ot1;
         $ov2 = $ov2 + $ov1;
-        $og1 = ($ov1 / $oa1) * 1000;
-        $og2 = ($ov2 / $oa2) * 1000;
+        if ($oa1 == 0){
+            $og1 = 0;
+        }else{
+            $og1 = ($ov1 / $oa1) * 1000;
+        }
+        if ($oa2 == 0){
+            $og2 = 0;
+        }else{
+            $og2 = ($ov2 / $oa2) * 1000;
+        }
         $fa2 = SetFormatClass($ta2, $oa2);
         $ft2 = SetFormatClass($tt2, $ot2);
         $fv2 = SetFormatClass($tv2, $ov2);
@@ -845,14 +942,13 @@ Function CalculateTimes($trip, $i, $wp, $prevwp, $nextwp
     , &$fr1, &$fr2, &$fl1, &$fl2, &$fcn, &$fat, &$fvt){
 //-----------------------------------------------------
 
-    if ($i == 0) {
+    if ($i == 0) { // start point
         // initialize totals
-        $tr1 = ''; $tr2 = '';  $or1 = ''; $or2 = '';
-        $tl1 = ''; $tl2 = '';  $ol1 = ''; $ol2 = '';
+        $tr1 = ''; $tr2 = 0;  $or1 = ''; $or2 = 0;
+        $tl1 = ''; $tl2 = 0;  $ol1 = ''; $ol2 = 0;
         $tat = ''; $oat = '';
         $fr1 = ''; $fr2 = ''; $fl1 = ''; $fl2 = ''; $fcn = ''; $fat = ''; $fvt = '';
-        $tvt = '';
-        $tcn = 0;
+        $tvt = $trip->att('date');
         if ($wp['statusid'] != WaypointStatus::STATUS_LEFT){
             $ovt = $tvt;
         }
@@ -861,7 +957,71 @@ Function CalculateTimes($trip, $i, $wp, $prevwp, $nextwp
         }
         $ocn = $tcn;
     }
+    if ($i > 0) { // other waypoints
+        // calculate theoretical values
+        $tr1 = $wp['theoreticaldrivetime'];
+        $tr2 = $tr2 + $tr1;
+        $tat = $ovt + ($tr1 * 60);
+        if ($wp['typeid'] != WaypointType::TYPE_ENDPOINT){
+            $tl1 = CalculateChargeTime(0, CalculateChargeNeeded($nextwp['theoreticaltypical']));
+            $tl2 = $tl2 + $tl1;
+            $tvt = $tat + ($tl1 * 60);
+        }else{
+            $tl1 = '';
+            $tl2 = '';
+            $tvt = '';
+        }
 
+        // calculate effective values if applicable
+        if ($wp['statusid'] == WaypointStatus::STATUS_DRIVING){
+            $or1 = $tr1;
+            $ol1 = $tl1;
+            $oat = $tat;
+            $ovt = $tvt;
+        }
+        else{
+            $or1 = round(($wp['arrivaltime'] - $prevwp['departuretime']) / 60, 0);
+            $oat = $wp['arrivaltime'];
+
+            if ($wp['typeid'] != WaypointType::TYPE_ENDPOINT){
+                if ($wp['statusid'] < WaypointStatus::STATUS_CHARGED){
+                    $ol1 = CalculateChargeTime($wp['arrivaltypical'], CalculateChargeNeeded($nextwp['theoreticaltypical']));
+                }else{
+                    $ol1 = round(($wp['chargeendtime'] - $wp['chargestarttime']) / 60, 0);
+                }
+            }
+            if ($wp['statusid'] == WaypointStatus::STATUS_ARRIVED){
+                $ovt = $wp['arrivaltime'] + (60 * $ol1);
+            }
+            if ($wp['statusid'] == WaypointStatus::STATUS_CHARGING){
+                $ovt = $wp['chargestarttime'] + (60 * $ol1);
+            }
+            if ($wp['statusid'] == WaypointStatus::STATUS_CHARGED){
+                $ovt = $wp['chargeendtime'];
+            }
+            if ($wp['statusid'] == WaypointStatus::STATUS_LEFT){
+                $ovt = $wp['departuretime'];
+            }
+        }
+        $or2 = $or2 + $or1;
+        if ($wp['typeid'] != WaypointType::TYPE_ENDPOINT){
+            $ol2 = $ol2 + $ol1;
+            $fl1 = SetFormatClass($tl1, $ol1);
+            $fl2 = SetFormatClass($tl2, $ol2);
+            $fvt = SetFormatClass($tvt, $ovt);
+        }
+
+        $fr1 = SetFormatClass($tr1, $or1);
+        $fr2 = SetFormatClass($tr2, $or2);
+        $fat = SetFormatClass($tat, $oat);
+
+    }
+
+    if ($wp['typrid'] != WaypointType::TYPE_ENDPOINT) {
+        $tcn = CalculateChargeNeeded($nextwp['theoreticaltypical']);
+        $ocn = $tcn;
+        $fcn = SetFormatClass($tcn, $ocn);
+    }
 }
 
 Function SetFormatClass($t, $o){
@@ -874,91 +1034,94 @@ Function SetFormatClass($t, $o){
     }
     return 'E';
 }
-/*
-if ($i == 0){
-    // first waypoint initialize counters
-    if ($wp['statusid'] < 4){
-        $startdrivetime = $trip->att('date');
-        $wpchargeneeded = $wp['theoreticalchargeneeded'];
-    }
-    else{
-        $startdrivetime = $wp['departuretime'];
-        $wpchargeneeded = $wp['departuretypical'];
-    }
-    $wpdeparturetime = date('H:i', $startdrivetime);
-    $wpchargestarted = $wpchargeneeded;
-}
-else{
-    // make running totals
-    if ($wp['statusid'] == 0){
-        $wpdistance = $wp['theoreticaldistance'];
-        $wptypical = $wp['theoreticaltypical'];
-        $wpconsumption = $wp['theoreticalconsumption'];
-        $wparrivaltime = $startdrivetime + ($wp['theoreticaldrivetime'] * 60);
-        $wpchargestart = $wpchargestarted - $wp['theoreticaltypical'];
-    }
-    else{
-        $wpdistance = $wp['arrivaldistance'];
-        $wptypical = ($wpchargestarted - $wp['arrivaltypical']);
-        $wpconsumption = $wp['arrivalconsumption'];
-        $wparrivaltime = $wp['arrivaltime'];
-        $wpchargestart = intval($wp['arrivaltypical']);
-    }
-    $totaldistance += $wpdistance;
-    $totaltypical += $wptypical;
-    $totalconsumption += $wpconsumption;
-    $startdrivetime = $wparrivaltime;
-
-    if ($wpdistance <> 0){
-        $wpaverage = round( ($wpconsumption * 1000)/ $wpdistance, 0);
-    }
-    else{
-        $wpaverage = '';
-    }
-
-    if ($wp['statusid'] < 3){
-        //$startdrivetime = $wparrivaltime + ($wp['theoreticalchargetime'] * 60);
-        $startdrivetime = $wparrivaltime + (CalculateChargeTime(0, $wp['theoreticalchargeneeded']) * 60);
-        $wpchargeneeded = $wp['theoreticalchargeneeded'];
-    }
-    if ($wp['statusid'] == 3){
-        $startdrivetime = $wp['chargeendtime'];
-        $wpchargeneeded = $wp['chargeendtypical'];
-    }
-
-    if ($wp['statusid'] == 4){
-        $wpchargeneeded = $wp['departuretypical'];
-        $startdrivetime = $wp['departuretime'];
-    }
-    // to calculate
-    $wpdrivetime = $wp['theoreticaldrivetime'];
-    $totaldrivetime += $wpdrivetime;
-    //$wpchargetime = $wp['theoreticalchargetime'];
-    $wpchargetime = CalculateChargeTime(0, $wp['theoreticalchargeneeded']);
-    $totalchargetime += $wpchargetime;
 
 
 
-    //format the output
-    $wpdistance = number_format($wpdistance, 1, ',', '.');
-    $wptypical = number_format($wptypical, 0);
-    $wpconsumption = number_format($wpconsumption, 1, ',', '.');
-    $wpdrivetime = date ('H:i', mktime(0 ,$wpdrivetime, 0, 1, 1, 2000));
-    if ($wpchargetime > 0){
-        $wpchargetime = date('H:i', mktime(0, $wpchargetime, 0, 1, 1, 2000));
-    }
-    else{
-        $wpchargetime = '';
-    }
-
-    $wparrivaltime = date ('H:i', $wparrivaltime);
-    $wpdeparturetime = date ('H:i', $startdrivetime);
-}
-*/
 
 function Obsolete(){
     $t = 1;
 
+    /*
+    if ($i == 0){
+        // first waypoint initialize counters
+        if ($wp['statusid'] < 4){
+            $startdrivetime = $trip->att('date');
+            $wpchargeneeded = $wp['theoreticalchargeneeded'];
+        }
+        else{
+            $startdrivetime = $wp['departuretime'];
+            $wpchargeneeded = $wp['departuretypical'];
+        }
+        $wpdeparturetime = date('H:i', $startdrivetime);
+        $wpchargestarted = $wpchargeneeded;
+    }
+    else{
+        // make running totals
+        if ($wp['statusid'] == 0){
+            $wpdistance = $wp['theoreticaldistance'];
+            $wptypical = $wp['theoreticaltypical'];
+            $wpconsumption = $wp['theoreticalconsumption'];
+            $wparrivaltime = $startdrivetime + ($wp['theoreticaldrivetime'] * 60);
+            $wpchargestart = $wpchargestarted - $wp['theoreticaltypical'];
+        }
+        else{
+            $wpdistance = $wp['arrivaldistance'];
+            $wptypical = ($wpchargestarted - $wp['arrivaltypical']);
+            $wpconsumption = $wp['arrivalconsumption'];
+            $wparrivaltime = $wp['arrivaltime'];
+            $wpchargestart = intval($wp['arrivaltypical']);
+        }
+        $totaldistance += $wpdistance;
+        $totaltypical += $wptypical;
+        $totalconsumption += $wpconsumption;
+        $startdrivetime = $wparrivaltime;
+
+        if ($wpdistance <> 0){
+            $wpaverage = round( ($wpconsumption * 1000)/ $wpdistance, 0);
+        }
+        else{
+            $wpaverage = '';
+        }
+
+        if ($wp['statusid'] < 3){
+            //$startdrivetime = $wparrivaltime + ($wp['theoreticalchargetime'] * 60);
+            $startdrivetime = $wparrivaltime + (CalculateChargeTime(0, $wp['theoreticalchargeneeded']) * 60);
+            $wpchargeneeded = $wp['theoreticalchargeneeded'];
+        }
+        if ($wp['statusid'] == 3){
+            $startdrivetime = $wp['chargeendtime'];
+            $wpchargeneeded = $wp['chargeendtypical'];
+        }
+
+        if ($wp['statusid'] == 4){
+            $wpchargeneeded = $wp['departuretypical'];
+            $startdrivetime = $wp['departuretime'];
+        }
+        // to calculate
+        $wpdrivetime = $wp['theoreticaldrivetime'];
+        $totaldrivetime += $wpdrivetime;
+        //$wpchargetime = $wp['theoreticalchargetime'];
+        $wpchargetime = CalculateChargeTime(0, $wp['theoreticalchargeneeded']);
+        $totalchargetime += $wpchargetime;
+
+
+
+        //format the output
+        $wpdistance = number_format($wpdistance, 1, ',', '.');
+        $wptypical = number_format($wptypical, 0);
+        $wpconsumption = number_format($wpconsumption, 1, ',', '.');
+        $wpdrivetime = date ('H:i', mktime(0 ,$wpdrivetime, 0, 1, 1, 2000));
+        if ($wpchargetime > 0){
+            $wpchargetime = date('H:i', mktime(0, $wpchargetime, 0, 1, 1, 2000));
+        }
+        else{
+            $wpchargetime = '';
+        }
+
+        $wparrivaltime = date ('H:i', $wparrivaltime);
+        $wpdeparturetime = date ('H:i', $startdrivetime);
+    }
+    */
 
     /*
     // tripstatus

@@ -46,7 +46,7 @@
             $this->user = $email;
             $this->token = $token;    
         }
-        }
+
 
         public function debug($newvalue = true)
         {
