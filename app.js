@@ -111,6 +111,9 @@
 
             this.getcardata = function (c, t) {
                 console.debug('Get car API-data for car ' + c + 'departuretypical ' + t);
+                // clear car-data
+                // ?????
+                // get the new car-data
                 TeslaService.controllermethods.servercall({action: 'getcardata', car: c, typical: t});
             };
 

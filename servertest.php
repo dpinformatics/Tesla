@@ -32,17 +32,33 @@ include_once('includes/bootstrap.inc.php');
 //CreateRoute(52, '2016-01-02 10:00'); exit();
 //CreateRoute(6, '2016-01-03 10:00');
 
-//echo 'CarData for car 38855 :<br>===============<br> ';
+/*
+$name = 'Berchem - Soll (shortski weekend)';
+$date = '2016-02-24 22:00';
+$car = '38855';
+$startlocation = 'Berchem';
+$tripid = CreateTripDate($name, $date, $car, $startlocation);
+echo 'trip '.$tripid.' '.$name.' created<br><br>';
+
+//AddWaypoint($tripid, $destination, $typeid, $distance, $typical, $drivetime)
+AddWaypoint($tripid, 'SuC Erftstadt', 3, 197.1, 230, 135);
+AddWaypoint($tripid, 'SuC Hirschberg', 3, 240.7, 283, 165);
+AddWaypoint($tripid, 'SuC Ulm', 3, 212.8, 257, 150);
+AddWaypoint($tripid, 'SuC Irschenberg', 3, 201.7, 248, 135);
+AddWaypoint($tripid, 'Hotel Berghof, A-6306 Söll', 2, 57.0, 63, 45);
+;
+*/
+echo 'CarData for car 38855 :<br>===============<br> ';
 //echo json_encode(GetCarStateRaw('38855'));
 //echo json_encode(GetCarChargeRaw('38855'));
-//echo json_encode(GetCarData('38855'));
+echo json_encode(GetCarData('38855'));
 
 //echo 'TrpDetail for trip 10 :<br>===============<br> ';
 //echo json_encode(GetTripDetail(10));
 
 //echo '<br><br>';
-echo 'TrpDetail for trip 14 :<br>===============<br> ';
-echo json_encode(GetTripDetail(14));
+//echo 'TrpDetail for trip 14 :<br>===============<br> ';
+//echo json_encode(GetTripDetail(14));
 
 //echo CalculateChargeTime(50, 350);
 
@@ -68,9 +84,67 @@ for ($x = 10; $x <= 380; $x = $x + 10) {
 
 exit();
 
+function CreateTripDate ($name, $startdate, $car, $startlocation)
+{
+    // startdate = '2015-10-25 10:30'
+    $uu = (int)substr($startdate, 11, 2);     // hours
+    $nn = (int)substr($startdate, 14, 2);     // minutes
+    $dd = (int)substr($startdate, 8, 2);     // day
+    $mm = (int)substr($startdate, 5, 2);     // month
+    $jj = (int)substr($startdate, 0, 4);     // year
+
+    return CreateTrip($name, $jj, $mm, $dd, $uu, $nn, $car, $startlocation);
+
+}
+function CreateTrip ($name, $year, $month, $day, $hour, $minutes, $car, $startlocation)
+{
+    echo 'Create new trip<br>===============<br>';
+    // trip
+    $t1 = new trip();
+    $t1->att('statusid',1);
+    $t1->att('name', $name);
+    $t1->att('date', mktime((int)$hour ,(int)$minutes, 0, (int)$month, (int)$day, (int)$year));
+    $t1->att('car', $car);
+    $t1->save();
+    $tripid = $t1->att('objid');
+    echo 'Trip '.$t1->att('name').' (id : '.$t1->att('objid').') saved<br><br>';
+
+    echo 'Create first waypoint (startpoint)<br>===================================<br>';
+    // first waypoint (startpoint)
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', $startlocation);
+    $wp->att('typeid', 1);
+    $wp->att('statusid', 3);
+    $wp->att('theoreticaldestination', $startlocation);
+    $wp->save();
+    echo 'Waypoint ' . $wp->att('destination') . ' (id : ' . $wp->att('objid') . ') saved<br><br>';
+
+    return $tripid;
+}
+
+function AddWaypoint($tripid, $destination, $typeid, $distance, $typical, $drivetime)
+{
+
+    echo 'Add new waypoint to trip '.$tripid.'<br>============================<br>';
+    // new waypoint
+    $wp = new waypoint();
+    $wp->att('tripid', $tripid);
+    $wp->att('destination', $destination);
+    $wp->att('typeid', $typeid);
+    $wp->att('statusid', 0);
+    $wp->att('theoreticaldestination', $destination);
+    $wp->att('theoreticaldistance', $distance);
+    $wp->att('theoreticaltypical', $typical);
+    $wp->att('theoreticaldrivetime', $drivetime);
+    $wp->save();
+    echo 'Waypoint ' . $wp->att('destination') . ' (id : ' . $wp->att('objid') . ') saved<br><br>';
+
+}
+
+
 function GetCarStateRaw($carkey)
 {
-    //-----------------------------------------
     include_once("apiclient/tesla.class.php");
     $tesla = new TeslaClient("e4a9949fcfa04068f59abb5a658f2bac0a3428e4652315490b659d5ab3f35a9e", "c75f14bbadc8bee3a7594412c31416f8300256d7668ea7e6e7f06727bfb9d220");
 

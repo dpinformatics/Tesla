@@ -309,7 +309,7 @@ function GetTripDetailOld($tripId)
 
                     if ($wp['statusid'] < 3){
                         //$startdrivetime = $wparrivaltime + ($wp['theoreticalchargetime'] * 60);
-                        $startdrivetime = $wparrivaltime + (CalculateChargeTime(0, $wp['theoreticalchargeneeded']) * 60);
+                        $startdrivetime = $wparrivaltime + (CalculateChargeTime(0, $wp['theoreticalchargeneeded'], $wp['typeid']) * 60);
                         $wpchargeneeded = $wp['theoreticalchargeneeded'];
                     }
                     if ($wp['statusid'] == 3){
@@ -325,7 +325,7 @@ function GetTripDetailOld($tripId)
                     $wpdrivetime = $wp['theoreticaldrivetime'];
                     $totaldrivetime += $wpdrivetime;
                     //$wpchargetime = $wp['theoreticalchargetime'];
-                    $wpchargetime = CalculateChargeTime(0, $wp['theoreticalchargeneeded']);
+                    $wpchargetime = CalculateChargeTime(0, $wp['theoreticalchargeneeded'], $wp['typeid']);
                     $totalchargetime += $wpchargetime;
 
 
@@ -469,6 +469,7 @@ function GetTripDetail($tripId)
         // get the last departure typical to calculate consumption for next arrival
         if ($wp['statusid'] == WaypointStatus::STATUS_LEFT){
             $lasttypical = $wp['departuretypical'];
+            $lastodo = round($wp['departuredistance'], 1);
         }
 
         // calculate all values
@@ -558,6 +559,7 @@ function GetTripDetail($tripId)
     , 'statusid' => $statusid
     , 'etape' => $wpnbr
     , 'lasttypical' => $lasttypical
+    , 'lastodo' => $lastodo
     , 'waypoints' => $dwp
     );
 
@@ -565,32 +567,55 @@ function GetTripDetail($tripId)
     //return $d;
 }
 
-function CalculateChargeTime($from, $to)
-    {
-    //--------------------------------------
+function CalculateChargeTime($from, $to, $chargertype)
+{
 
+    if ($chargertype == WaypointType::TYPE_CHARGEPOINT_SUC){
         $max = 385;
         // xls function :  =ROUNDUP((LN(-(((C4)/$J$2)-1))/-LN(1,03830664))-(LN(-(((B4)/$J$2)-1))/-LN(1,03830664));0)
         $mt = log(-(($to / $max) - 1)) / - log(1.03830664);
         $mf = log(-(($from / $max) - 1)) / - log(1.03830664);
         $m = ceil($mt - $mf);
-
-        return $m;
+    }else{
+        if ($chargertype == WaypointType::TYPE_CHARGEPOINT_CHA){
+            $kW = 43.0;
+        }
+        if ($chargertype == WaypointType::TYPE_CHARGEPOINT_3_32){
+            $kW = 22.0;
+        }
+        if ($chargertype == WaypointType::TYPE_CHARGEPOINT_3_16){
+            $kW = 11.0;
+        }
+        if ($chargertype == WaypointType::TYPE_CHARGEPOINT_1_32){
+            $kW = 7.4;
+        }
+        if ($chargertype == WaypointType::TYPE_CHARGEPOINT_1_16){
+            $kW = 3.7;
+        }
+        if ($chargertype == WaypointType::TYPE_CHARGEPOINT_1_10){
+            $kW = 2.3;
+        }
+        $m = ceil(($to - $from) / ($kW / 0.200) * 60);
     }
+
+    return $m;
+}
 
 function CalculateChargeNeeded($typical)
     {
     //--------------------------------------
 
         $n = floor($typical * 1.1 / 10) * 10;
-        $c = min(380, $n);
+        $n = max($typical + 10, $n);
+        $c = min(380, $n, $typical + 20);
+        $c = floor($c / 10) * 10;
 
         return $c;
     }
 
 function CalculateEnergy($typical)
 {
-    $kWh = round($typical * 0.193, 1);
+    $kWh = round($typical * 0.200, 1);
     return $kWh;
 }
 
@@ -714,7 +739,7 @@ Function CalculateTimes($trip, $i, $wp, $prevwp, $nextwp
         $tr2 = $tr2 + $tr1;
         $tat = $ovt + ($tr1 * 60);
         if ($wp['typeid'] != WaypointType::TYPE_ENDPOINT){
-            $tl1 = CalculateChargeTime(0, CalculateChargeNeeded($nextwp['theoreticaltypical']));
+            $tl1 = CalculateChargeTime(0, CalculateChargeNeeded($nextwp['theoreticaltypical']), $wp['typeid']);
             $tl2 = $tl2 + $tl1;
             $tvt = $tat + ($tl1 * 60);
         }else{
@@ -736,7 +761,7 @@ Function CalculateTimes($trip, $i, $wp, $prevwp, $nextwp
 
             if ($wp['typeid'] != WaypointType::TYPE_ENDPOINT){
                 if ($wp['statusid'] < WaypointStatus::STATUS_CHARGED){
-                    $ol1 = CalculateChargeTime($wp['arrivaltypical'], CalculateChargeNeeded($nextwp['theoreticaltypical']));
+                    $ol1 = CalculateChargeTime($wp['arrivaltypical'], CalculateChargeNeeded($nextwp['theoreticaltypical']), $wp['typeid']);
                 }else{
                     $ol1 = round(($wp['chargeendtime'] - $wp['chargestarttime']) / 60, 0);
                 }
@@ -760,6 +785,8 @@ Function CalculateTimes($trip, $i, $wp, $prevwp, $nextwp
             $fl1 = SetFormatClass($tl1, $ol1);
             $fl2 = SetFormatClass($tl2, $ol2);
             $fvt = SetFormatClass($tvt, $ovt);
+        }else{
+            $ol2 = '';
         }
 
         $fr1 = SetFormatClass($tr1, $or1);
@@ -768,10 +795,13 @@ Function CalculateTimes($trip, $i, $wp, $prevwp, $nextwp
 
     }
 
-    if ($wp['typrid'] != WaypointType::TYPE_ENDPOINT) {
+    if ($wp['typeid'] != WaypointType::TYPE_ENDPOINT) {
         $tcn = CalculateChargeNeeded($nextwp['theoreticaltypical']);
         $ocn = $tcn;
         $fcn = SetFormatClass($tcn, $ocn);
+    }else{
+        $tcn = '';
+        $ocn = '';
     }
 }
 
@@ -810,8 +840,8 @@ function GetCarData($carkey, $typical)
     $reply = $tesla->get('vehicles/' . $technicalid . '/data_request/vehicle_state');
     $physical = $reply['response'];
     $s['vehicle_name'] = $physical['vehicle_name'];
-    $s['odometer'] = round($physical['odometer'], 2);
-    $s['odometerkm'] = round($physical['odometer'] * 1.60934, 2);
+    $s['odometer'] = round($physical['odometer'], 1);
+    $s['odometerkm'] = round($physical['odometer'] * 1.60934, 1);
     $s['locked'] = $physical['locked'];
     $s['exterior_color'] = $physical['exterior_color'];
     $s['car_version'] = $physical['car_version'];

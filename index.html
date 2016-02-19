@@ -7,7 +7,7 @@
 
         td,
         th {
-            font-size: x-large;
+            font-size: medium;
         }
 
     </style>
@@ -109,91 +109,6 @@
 </div>
 
 <!-- Detail for a trip -->
-<div ng-show="tc.view == 'view_Old'">
-    <h1 class="ng-binding ">
-        <a ng-click="tc.changeview('list', 0)" class="btn btn-lg btn-default"><i class="fa fa-undo"></i> Terug naar overzicht</a>
-        <a ng-click="tc.changeview('view', tc.activetrip)" class="btn btn-lg btn-default"><i class="fa fa-undo"></i> Verfrissen</a>
-    </h1>
-
-    <!--
-    <div class="row">
-        <div class="col-md-6 bg-info">
-            <a ng-click="tc.changeview('list', 0)" class="btn btn-btn-lg btn-danger"><i class="fa fa-undo"></i> Back to list</a>
-        </div>
-        <div class="col-md-6 bg-info">
-            <select ng-change="tc.changeview('view', tc.activetrip)" ng-model="tc.activetrip"
-                    ng-options="trip.id as trip.name for trip in tc.trips" class="form-control">
-
-            </select>
-        </div>
-    </div>
-    -->
-
-    <div class="row">
-        <div class="col-md-12">
-            <div ng-repeat="trip in tc.trips |filter: {id: tc.activetrip}">
-                <h1>{{trip.name}} </h1>
-                <i class="fa fa-calendar"></i> {{trip.status}} {{trip.date * 1000|date: 'dd-MM-yyyy'}}<br/><br/>
-
-                <h3>We zijn {{tc.status[tc.trip.statusid].description}} {{tc.trip.waypoints[tc.trip.etape].name}}.</h3>
-                <div ng-hide="tc.logindata.login=='readonly'">
-                    <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car)" data-toggle="modal" data-target="#myArrival" ng-show="tc.trip.statusid == 0"><i class="fa fa-flag-checkered"></i> Aankomst</a>
-                    <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car)" data-toggle="modal" data-target="#myChargeStart"ng-show="tc.trip.statusid == 1"><i class="fa fa-bolt"></i> Start laden</a>
-                    <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car)" data-toggle="modal" data-target="#myChargeEnd" ng-show="tc.trip.statusid == 2"><i class="fa fa-refresh"></i> Stop laden</a>
-                    <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car)" data-toggle="modal" data-target="#myDeparture" ng-show="tc.trip.statusid == 1 || tc.trip.statusid == 3"><i class="fa fa-car"></i> Vertrek</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <h2>Waypoints </h2>
-            <table class="table table-striped table-hover">
-                <tr class="bg-success">
-                    <th>&nbsp</th>
-                    <th>&nbsp</th>
-                    <th>&nbsp</th>
-                    <th class="text-center">Afstand<br>km</th>
-                    <th class="text-center">Typical<br>km</th>
-                    <th class="text-center">Verbruik<br>kWh</th>
-                    <th class="text-center">Gemiddeld<br>kWh</th>
-                    <th class="text-center">Rijtijd<br>u</th>
-                    <th class="text-center">Laadtijd<br>u</th>
-                    <th class="text-center">Laden tot<br></th>
-                    <th class="text-center">Aankomst<br>u</th>
-                    <th class="text-center">Vertrek<br>u</th>
-                </tr>
-                <tr ng-repeat="wp in tc.trip.waypoints">
-                    <td><a class="open-WayPointDetail btn btn-primary btn-lg" data-toggle="modal"
-                           data-target="#myWayPointDetail" ng-click="tc.activewaypoint = $index">Detail</a>
-                    </td>
-                    <td><i class="fa fa-car text-primary" ng-show="$index == tc.trip.etape"></i></td>
-                    <td>{{wp.name}}</td>
-                    <td class="ng-binding text-center">{{wp.overview.distance}}<br>
-                        <small>{{wp.overview.totaldistance}}</small>
-                    </td>
-                    <td class="ng-binding text-center">{{wp.overview.typical}}<br>
-                        <small>{{wp.overview.totaltypical}}</small>
-                    </td>
-                    <td class="ng-binding text-center">{{wp.overview.consumption}}<br>
-                        <small>{{wp.overview.totalconsumption}}</small>
-                    </td>
-                    <td class="ng-binding text-center">{{wp.overview.averageconsumption}}</td>
-                    <td class="ng-binding text-center">{{wp.overview.drivetime}}<br>
-                        <small>{{wp.overview.totaldrivetime}}</small>
-                    </td>
-                    <td class="ng-binding text-center">{{wp.overview.chargetime}}<br>
-                        <small>{{wp.overview.totalchargetime}}</small>
-                    </td>
-                    <td class="ng-binding text-center"><b>{{wp.overview.chargeneeded}}</b></td>
-                    <td class="ng-binding text-center">{{wp.overview.arrivaltime}}</td>
-                    <td class="ng-binding text-center">{{wp.overview.departuretime}}</td>
-                </tr>
-            </table>
-        </div>
-
-    </div>
-</div>
-
-<!-- Detail for a trip -->
 <div ng-show="tc.view == 'view'">
         <h1 class="ng-binding ">
             <a ng-click="tc.changeview('list', 0)" class="btn btn-lg btn-default"><i class="fa fa-undo"></i> Terug naar overzicht</a>
@@ -241,9 +156,9 @@
                         <th class="text-center">Verbruik<br>kWh</th>
                         <th class="text-center">Gemiddeld<br>kWh</th>
                         <th class="text-center">Rijtijd<br>u</th>
-                        <th class="text-center">Laadtijd<br>u</th>
-                        <th class="text-center">Laden tot<br></th>
                         <th class="text-center">Aankomst<br>u</th>
+                        <th class="text-center">Laden tot<br></th>
+                        <th class="text-center">Laadtijd<br>u</th>
                         <th class="text-center">Vertrek<br>u</th>
                     </tr>
                     <tr ng-repeat="wp in tc.trip.waypoints">
@@ -267,11 +182,11 @@
                         <td class="ng-binding text-center">{{wp.overview.drivetime}}<br>
                             <small>{{wp.overview.totaldrivetime}}</small>
                         </td>
+                        <td class="ng-binding text-center">{{wp.overview.arrivaltime}}</td>
+                        <td class="ng-binding text-center"><b>{{wp.overview.chargeneeded}}</b></td>
                         <td class="ng-binding text-center">{{wp.overview.chargetime}}<br>
                             <small>{{wp.overview.totalchargetime}}</small>
                         </td>
-                        <td class="ng-binding text-center"><b>{{wp.overview.chargeneeded}}</b></td>
-                        <td class="ng-binding text-center">{{wp.overview.arrivaltime}}</td>
                         <td class="ng-binding text-center">{{wp.overview.departuretime}}</td>
                     </tr>
                 </table>
@@ -304,14 +219,14 @@
                         <label for="arrival-typical" class="control-label">Typical range :</label>
                         <div class="input-group">
                             <input type="number" class="form-control input-lg" id="arrival-typical" ng-model="tc.cardata.charge.ideal_battery_rangekm">
-                            <span class="input-group-addon">km ({{tc.cardata.battery_level}} %)</span>
+                            <span class="input-group-addon">km ({{tc.cardata.charge.battery_level}} %, {{tc.trip.lasttypical - tc.cardata.charge.ideal_battery_rangekm}} typicals verbruikt)</span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="arrival-distance" class="control-label">Km-stand :</label>
                         <div class="input-group">
                             <input type="number" class="form-control input-lg" id="arrival-distance" ng-model="tc.cardata.state.odometerkm">
-                            <span class="input-group-addon">km</span>
+                            <span class="input-group-addon">km ({{(tc.cardata.state.odometerkm - tc.trip.lastodo) | number:1 }} km afgelegd)</span>
                         </div>
                     </div>
                     <div class="form-group">

@@ -28,6 +28,8 @@
       <w>savechargeend</w>
       <w>savechargestart</w>
       <w>savedeparture</w>
+      <w>startdate</w>
+      <w>startlocation</w>
       <w>statusid</w>
       <w>theoreticalchargeneeded</w>
       <w>theoreticalconsumption</w>
@@ -41,6 +43,7 @@
       <w>totaldrivetime</w>
       <w>totaltypical</w>
       <w>tripid</w>
+      <w>typeid</w>
       <w>wpid</w>
       <w>wpnbr</w>
     </words>
