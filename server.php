@@ -140,9 +140,10 @@
             //get other parameters
             $car = strtolower($_REQUEST['car']);
             $typical = strtolower($_REQUEST['typical']);
+            $consumption = strtolower($_REQUEST['consumption']);
 
             // retrieve the data
-            $d = GetCarData($car, $typical);
+            $d = GetCarData($car, $typical, $consumption);
             echo json_encode($d);
             break;
 
@@ -466,10 +467,26 @@ function GetTripDetail($tripId)
             $statusid = $wp['statusid'];
         }
 
+
+        if ($wp['statusid'] == WaypointStatus::STATUS_ARRIVED){
+            $lasttypical = $wp['arrivaltypical'];
+            $lastodo = round($wp['arrivaldistance'], 1);
+            $lastconsumption = $wp['arrivalconsumption'];
+        }
+        if ($wp['statusid'] == WaypointStatus::STATUS_CHARGING or $wp['statusid'] == WaypointStatus::STATUS_CHARGED){
+            $lasttypical = $wp['arrivaltypical'];
+            $lastodo = round($wp['arrivaldistance'], 1);
+            $lastconsumption = 0;
+        }
         // get the last departure typical to calculate consumption for next arrival
         if ($wp['statusid'] == WaypointStatus::STATUS_LEFT){
             $lasttypical = $wp['departuretypical'];
             $lastodo = round($wp['departuredistance'], 1);
+            if ($wp['chargeendtypical'] == null){
+                $lastconsumption = $wp['arrivalconsumption'];
+            }else{
+                $lastconsumption = 0;
+            }
         }
 
         // calculate all values
@@ -560,6 +577,7 @@ function GetTripDetail($tripId)
     , 'etape' => $wpnbr
     , 'lasttypical' => $lasttypical
     , 'lastodo' => $lastodo
+    , 'lastconsumption' => $lastconsumption
     , 'waypoints' => $dwp
     );
 
@@ -615,7 +633,7 @@ function CalculateChargeNeeded($typical)
 
 function CalculateEnergy($typical)
 {
-    $kWh = round($typical * 0.200, 1);
+    $kWh = round($typical * 0.192, 1);
     return $kWh;
 }
 
@@ -817,7 +835,7 @@ Function SetFormatClass($t, $o){
 }
 
 
-function GetCarData($carkey, $typical)
+function GetCarData($carkey, $typical, $consumption)
 {
     //-----------------------------------------
     include_once("apiclient/tesla.class.php");
@@ -865,10 +883,10 @@ function GetCarData($carkey, $typical)
     $c['charge_kms_added_ideal'] = round($charge["charge_miles_added_ideal"] * 1.60934, 0);
 
     if ($typical == 0){
-        $s['consumption'] = 0;
+        $s['consumption'] = $consumption * 1.0;
     }else{
         // calculate consumption
-        $s['consumption'] = CalculateEnergy($typical - $c['ideal_battery_rangekm']);
+        $s['consumption'] = $consumption + CalculateEnergy($typical - $c['ideal_battery_rangekm']);
     }
 
     $d['state'] = $s;

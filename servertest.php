@@ -32,26 +32,25 @@ include_once('includes/bootstrap.inc.php');
 //CreateRoute(52, '2016-01-02 10:00'); exit();
 //CreateRoute(6, '2016-01-03 10:00');
 
-/*
-$name = 'Berchem - Soll (shortski weekend)';
-$date = '2016-02-24 22:00';
+
+$name = 'Soll - Berchem (shortski weekend) rechtstreeks Ulm';
+$date = '2016-02-28 16:00';
 $car = '38855';
-$startlocation = 'Berchem';
+$startlocation = 'Stockach 33, A-6306 Söll ';
 $tripid = CreateTripDate($name, $date, $car, $startlocation);
 echo 'trip '.$tripid.' '.$name.' created<br><br>';
 
 //AddWaypoint($tripid, $destination, $typeid, $distance, $typical, $drivetime)
-AddWaypoint($tripid, 'SuC Erftstadt', 3, 197.1, 230, 135);
-AddWaypoint($tripid, 'SuC Hirschberg', 3, 240.7, 283, 165);
-AddWaypoint($tripid, 'SuC Ulm', 3, 212.8, 257, 150);
-AddWaypoint($tripid, 'SuC Irschenberg', 3, 201.7, 248, 135);
-AddWaypoint($tripid, 'Hotel Berghof, A-6306 Söll', 2, 57.0, 63, 45);
-;
-*/
-echo 'CarData for car 38855 :<br>===============<br> ';
+AddWaypoint($tripid, 'SuC Ulm', 3, 248.6, 294, 160);
+AddWaypoint($tripid, 'SuC Waldlaubersheim', 3, 295.2, 329, 195);
+AddWaypoint($tripid, 'SuC Erftstast', 3, 143.7, 167, 95);
+AddWaypoint($tripid, 'Berchem', 2, 198.6, 225, 135);
+
+
+//echo 'CarData for car 38855 :<br>===============<br> ';
 //echo json_encode(GetCarStateRaw('38855'));
 //echo json_encode(GetCarChargeRaw('38855'));
-echo json_encode(GetCarData('38855'));
+//echo json_encode(GetCarData('38855'));
 
 //echo 'TrpDetail for trip 10 :<br>===============<br> ';
 //echo json_encode(GetTripDetail(10));

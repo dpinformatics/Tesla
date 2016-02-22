@@ -109,12 +109,12 @@
                 this.changeview('list', 0);
             };
 
-            this.getcardata = function (c, t) {
-                console.debug('Get car API-data for car ' + c + 'departuretypical ' + t);
+            this.getcardata = function (c, t, v) {
+                console.debug('Get car API-data for car ' + c + ' typical ' + t + ' consumption ' + v);
                 // clear car-data
                 // ?????
                 // get the new car-data
-                TeslaService.controllermethods.servercall({action: 'getcardata', car: c, typical: t});
+                TeslaService.controllermethods.servercall({action: 'getcardata', car: c, typical: t, consumption: v});
             };
 
 

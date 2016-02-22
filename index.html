@@ -9,7 +9,9 @@
         th {
             font-size: medium;
         }
-
+        .xlargefont {
+            font-size: x-large;
+        }
     </style>
     <title>Tesla Trip Planner and  Logger</title>
     <script type="text/javascript">
@@ -49,15 +51,15 @@
         <div class="col-md-4">
             <form>
                 <div class="form-group">
-                    <label for="car" class="control-label">VIN :</label>
+                    <label for="car" class="control-label xlargefont">VIN :</label>
                     <div class="input-group">
-                        <input type="text" class="form-control input-lg" id="car" ng-model="tc.logindata.car">
+                        <input type="text" class="form-control input-lg xlargefont" id="car" ng-model="tc.logindata.car">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="password" class="control-label">Paswoord :</label>
+                    <label for="password" class="control-label xlargefont">Paswoord :</label>
                     <div class="input-group">
-                        <input type="password" class="form-control input-lg" id="password" ng-model="tc.password">
+                        <input type="password" class="form-control input-lg xlargefont" id="password" ng-model="tc.password">
                     </div>
                 </div>
             </form>
@@ -81,8 +83,8 @@
             <h1 >
                 <a ng-click="tc.methods.servercall({action: 'gettrips', car: tc.logindata.car})" class="btn btn-lg btn-default"><i  class="fa fa-refresh"></i> Verfrissen </a>
                 <!--a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myNewTrip" ng-show="tc.logindata.login == 'ok'"><i class="fa fa-file-o"></i> Log nieuwe trip</a-->
-                <a ng-hide="tc.logindata.login=='readonly'" class="btn btn-default btn-lg" data-toggle="modal" data-target="#myNewTripPlan" ><i class="fa fa-file-o"></i> Plan nieuwe trip</a>
-                <a ng-hide="tc.logindata.login=='readonly'" class="btn btn-default btn-lg" data-toggle="modal" data-target="#myNewTripLog" ><i class="fa fa-file-o"></i> Log nieuwe trip</a>
+                <!--a ng-hide="tc.logindata.login=='readonly'" class="btn btn-default btn-lg" data-toggle="modal" data-target="#myNewTripPlan" ><i class="fa fa-file-o"></i> Plan nieuwe trip</a-->
+                <!--a ng-hide="tc.logindata.login=='readonly'" class="btn btn-default btn-lg" data-toggle="modal" data-target="#myNewTripLog" ><i class="fa fa-file-o"></i> Log nieuwe trip</a-->
                 <a href="#" onclick="changeCSS()"class="btn btn-lg btn-default"><i class="fa fa-undo"></i> Dag - Nacht</a>
             </h1>
             <h1 >Overzicht trips voor VIN {{tc.logindata.car}}</h1>
@@ -113,6 +115,7 @@
         <h1 class="ng-binding ">
             <a ng-click="tc.changeview('list', 0)" class="btn btn-lg btn-default"><i class="fa fa-undo"></i> Terug naar overzicht</a>
             <a ng-click="tc.changeview('view', tc.activetrip)" class="btn btn-lg btn-default"><i class="fa fa-undo"></i> Verfrissen</a>
+            <a href="#" onclick="changeCSS()"class="btn btn-lg btn-default"><i class="fa fa-undo"></i> Dag - Nacht</a>
         </h1>
 
         <!--
@@ -137,10 +140,10 @@
 
                     <h3>We zijn {{tc.status[tc.trip.statusid].description}} {{tc.trip.waypoints[tc.trip.etape].name}}.</h3>
                     <div ng-hide="tc.logindata.login=='readonly'">
-                        <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car, tc.trip.lasttypical)" data-toggle="modal" data-target="#myArrival" ng-show="tc.trip.statusid == 0"><i class="fa fa-flag-checkered"></i> Aankomst</a>
-                        <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car, 0)" data-toggle="modal" data-target="#myChargeStart"ng-show="tc.trip.statusid == 1"><i class="fa fa-bolt"></i> Start laden</a>
-                        <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car, 0)" data-toggle="modal" data-target="#myChargeEnd" ng-show="tc.trip.statusid == 2"><i class="fa fa-refresh"></i> Stop laden</a>
-                        <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car, 0)" data-toggle="modal" data-target="#myDeparture" ng-show="tc.trip.statusid == 1 || tc.trip.statusid == 3"><i class="fa fa-car"></i> Vertrek</a>
+                        <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car, tc.trip.lasttypical, tc.trip.lastconsumption)" data-toggle="modal" data-target="#myArrival" ng-show="tc.trip.statusid == 0"><i class="fa fa-flag-checkered"></i> Aankomst</a>
+                        <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car, 0, 0)" data-toggle="modal" data-target="#myChargeStart"ng-show="tc.trip.statusid == 1"><i class="fa fa-bolt"></i> Start laden</a>
+                        <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car, 0, 0)" data-toggle="modal" data-target="#myChargeEnd" ng-show="tc.trip.statusid == 2"><i class="fa fa-refresh"></i> Stop laden</a>
+                        <a class="btn btn-primary btn-lg" ng-click="tc.getcardata(tc.logindata.car, 0, tc.trip.lastconsumption)" data-toggle="modal" data-target="#myDeparture" ng-show="tc.trip.statusid == 1 || tc.trip.statusid == 3"><i class="fa fa-car"></i> Vertrek</a>
                     </div>
                 </div>
             </div>
@@ -162,8 +165,8 @@
                         <th class="text-center">Vertrek<br>u</th>
                     </tr>
                     <tr ng-repeat="wp in tc.trip.waypoints">
-                        <td><a class="open-WayPointDetail btn btn-primary btn-lg" data-toggle="modal"
-                               data-target="#myWayPointDetail" ng-click="tc.activewaypoint = $index">Detail</a>
+                        <td><!--a class="open-WayPointDetail btn btn-primary btn-lg" data-toggle="modal"
+                               data-target="#myWayPointDetail" ng-click="tc.activewaypoint = $index">Detail</a-->
                         </td>
                         <td><i class="fa fa-car text-primary" ng-show="$index == tc.trip.etape"></i></td>
                         <td>{{wp.name}}</td>
@@ -204,36 +207,36 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title bg-info">Aankomst in {{tc.trip.waypoints[tc.trip.etape].name}}</h4>
+                <h2 class="modal-title bg-info xlargefont">Aankomst in {{tc.trip.waypoints[tc.trip.etape].name}}</h2>
             </div>
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="arrival-destination" class="control-label">Huidige locatie :</label>
+                        <label for="arrival-destination" class="control-label xlargefont">Huidige locatie :</label>
                         <div class="input-group">
-                            <input type="text" class="form-control input-lg" id="arrival-destination" ng-model="tc.trip.waypoints[tc.trip.etape].name">
-                            <span class="input-group-addon">&nbsp;</span>
+                            <input type="text" class="form-control input-lg xlargefont" id="arrival-destination" ng-model="tc.trip.waypoints[tc.trip.etape].name">
+                            <span class="input-group-addon xlargefont">&nbsp;</span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="arrival-typical" class="control-label">Typical range :</label>
+                        <label for="arrival-typical" class="control-label xlargefont ">Typical range :</label>
                         <div class="input-group">
-                            <input type="number" class="form-control input-lg" id="arrival-typical" ng-model="tc.cardata.charge.ideal_battery_rangekm">
-                            <span class="input-group-addon">km ({{tc.cardata.charge.battery_level}} %, {{tc.trip.lasttypical - tc.cardata.charge.ideal_battery_rangekm}} typicals verbruikt)</span>
+                            <input type="number" class="form-control input-lg xlargefont" id="arrival-typical" ng-model="tc.cardata.charge.ideal_battery_rangekm">
+                            <span class="input-group-addon xlargefont">km ({{tc.cardata.charge.battery_level}} %, {{tc.trip.lasttypical - tc.cardata.charge.ideal_battery_rangekm}} typicals verbruikt)</span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="arrival-distance" class="control-label">Km-stand :</label>
+                        <label for="arrival-distance" class="control-label xlargefont">Km-stand :</label>
                         <div class="input-group">
-                            <input type="number" class="form-control input-lg" id="arrival-distance" ng-model="tc.cardata.state.odometerkm">
-                            <span class="input-group-addon">km ({{(tc.cardata.state.odometerkm - tc.trip.lastodo) | number:1 }} km afgelegd)</span>
+                            <input type="number" class="form-control input-lg xlargefont" id="arrival-distance" ng-model="tc.cardata.state.odometerkm">
+                            <span class="input-group-addon xlargefont">km ({{(tc.cardata.state.odometerkm - tc.trip.lastodo) | number:1 }} km afgelegd)</span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="arrival-consumption" class="control-label">Verbruik :</label>
+                        <label for="arrival-consumption" class="control-label xlargefont">Verbruik :</label>
                         <div class="input-group">
-                            <input type="number" class="form-control input-lg" id="arrival-consumption" ng-model="tc.cardata.state.consumption">
-                            <span class="input-group-addon">kWh</span>
+                            <input type="number" class="form-control input-lg xlargefont" id="arrival-consumption" ng-model="tc.cardata.state.consumption">
+                            <span class="input-group-addon xlargefont">kWh</span>
                         </div>
                     </div>
                 </form>
@@ -259,15 +262,15 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title bg-info">Start laden in {{tc.trip.waypoints[tc.trip.etape].name}}</h4>
+                <h2 class="modal-title bg-info xlargefont">Start laden in {{tc.trip.waypoints[tc.trip.etape].name}}</h2>
             </div>
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="chargestart-typical" class="control-label">Typical range :</label>
+                        <label for="chargestart-typical" class="control-label xlargefont">Typical range :</label>
                         <div class="input-group">
-                            <input type="number" class="form-control input-lg" id="chargestart-typical" ng-model="tc.cardata.charge.ideal_battery_rangekm">
-                            <span class="input-group-addon">km </span>
+                            <input type="number" class="form-control input-lg xlargefont" id="chargestart-typical" ng-model="tc.cardata.charge.ideal_battery_rangekm">
+                            <span class="input-group-addon xlargefont">km ({{tc.cardata.charge.battery_level}} %) </span>
                         </div>
                     </div>
                 </form>
@@ -291,15 +294,15 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Stop laden in {{tc.trip.waypoints[tc.trip.etape].name}}</h4>
+                <h2 class="modal-title bg-info xlargefont">Stop laden in {{tc.trip.waypoints[tc.trip.etape].name}}</h2>
             </div>
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="chargeend-typical" class="control-label">Typical range :</label>
+                        <label for="chargeend-typical" class="control-label xlargefont">Typical range :</label>
                         <div class="input-group">
-                            <input type="number" class="form-control input-lg" id="chargeend-typical" ng-model="tc.cardata.charge.ideal_battery_rangekm">
-                            <span class="input-group-addon">km</span>
+                            <input type="number" class="form-control input-lg xlargefont" id="chargeend-typical" ng-model="tc.cardata.charge.ideal_battery_rangekm">
+                            <span class="input-group-addon xlargefont">km ( + {{tc.cardata.charge.charge_energy_added}} kWh, {{tc.cardata.charge.battery_level}} %)</span>
                         </div>
                     </div>
                 </form>
@@ -323,29 +326,29 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Vertrek vanuit {{tc.trip.waypoints[tc.trip.etape].name}}</h4>
+                <h2 class="modal-title bg-info xlargefont">Vertrek vanuit {{tc.trip.waypoints[tc.trip.etape].name}}</h2>
             </div>
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="departure-typical" class="control-label">Typical range :</label>
+                        <label for="departure-typical" class="control-label xlargefont">Typical range :</label>
                         <div class="input-group">
-                            <input type="number" class="form-control input-lg" id="departure-typical" ng-model="tc.cardata.charge.ideal_battery_rangekm">
-                            <span class="input-group-addon">km</span>
+                            <input type="number" class="form-control input-lg xlargefont" id="departure-typical" ng-model="tc.cardata.charge.ideal_battery_rangekm" >
+                            <span class="input-group-addon xlargefont">km ({{tc.cardata.charge.battery_level}} %)</span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="departure-distance" class="control-label">Km-stand :</label>
+                        <label for="departure-distance" class="control-label xlargefont">Km-stand :</label>
                         <div class="input-group">
-                            <input type="number" class="form-control input-lg" id="departure-distance" ng-model="tc.cardata.state.odometerkm">
-                            <span class="input-group-addon">km</span>
+                            <input type="number" class="form-control input-lg xlargefont" id="departure-distance" ng-model="tc.cardata.state.odometerkm">
+                            <span class="input-group-addon xlargefont">km</span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="departure-consumption" class="control-label">Verbruik :</label>
+                        <label for="departure-consumption" class="control-label xlargefont">Verbruik :</label>
                         <div class="input-group">
-                            <input type="number" class="form-control input-lg" id="departure-consumption" ng-model="tc.cardata.state.consumption">
-                            <span class="input-group-addon">kWh</span>
+                            <input type="number" class="form-control input-lg xlargefont" id="departure-consumption" ng-model="tc.cardata.state.consumption">
+                            <span class="input-group-addon xlargefont">kWh</span>
                         </div>
                     </div>
                 </form>
